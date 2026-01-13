@@ -16,6 +16,7 @@ export const routes = [
   {
     layout: "dashboard",
     role: "R99",
+    main:'home',
     token:true,
     pages: [
       {
@@ -73,6 +74,7 @@ export const routes = [
     {
     layout: "dashboard",
     role: "R01",
+    main:'home',
     token:true,
     pages: [
       {
@@ -107,6 +109,7 @@ export const routes = [
   },
    {
     layout: "dashboard",
+    main:'job',
     role: "R02",
     token:true,
     pages: [
@@ -143,6 +146,7 @@ export const routes = [
   {
     title: "auth pages",
     token:false,
+    main:'sign-in',
     layout: "auth",
     pages: [
       {

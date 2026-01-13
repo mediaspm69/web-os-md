@@ -46,7 +46,7 @@ function App() {
           <Route path={`/dashboard/*`} element={<Dashboard />} />
           <Route
             path="/*"
-            element={<Navigate to="/dashboard/home" replace />}
+            element={<Navigate to={`/dashboard/${ftr.main}`} replace />}
           />
           {ftr.pages.map((iPA, idx2) => (
             <Route key={idx2}>

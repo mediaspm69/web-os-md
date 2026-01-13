@@ -660,7 +660,7 @@ export function JobTable() {
                   </div>
                   <div className="w-full px-6">
                     <Typography className="text-[18px] font-bold text-blue-gray-700 text-center">
-                      ประวัติการดำเดินงาน
+                      ประวัติการดำเนินงาน
                     </Typography>
                     <div className="py-4 flex flex-col justify-between">
                       <JobHsitoryTimeline itemHistory={jobHistory} />
