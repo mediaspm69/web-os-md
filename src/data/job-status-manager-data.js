@@ -22,7 +22,7 @@ export const jobStaManager = [
   },
   {
     id: "3",
-    js_id: "S02",
+    js_id: "S07",
     status_id: "S02",
     name: "กำลังดำเนินงาน",
     color: "light-blue",

@@ -9,14 +9,14 @@ export const jobStaEmp = [
     status_id: "S01",
     js_id: "S05",
     name: "ยกเลิกงาน",
-    color: "red",
+    color: "gray",
   },
   {
     id: "2",
     status_id: "S02",
     js_id: "S05",
     name: "ยกเลิกงาน",
-    color: "red",
+    color: "gray",
   }
 ];
 

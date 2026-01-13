@@ -14,6 +14,7 @@ function App() {
 
   const token = getStorage("empId");
   const empRole = getStorage("empRole");
+  const empUsername = getStorage("empUsername");
   const checkToken = token && token !== undefined ? true : false;
 
   useMemo(async () => {
@@ -27,6 +28,9 @@ function App() {
         } else if (resp.role_id !== empRole) {
           removeAllStorage();
           window.location.reload();
+        } else if (resp.username !== empUsername) {
+          removeAllStorage();
+          window.location.reload();
         }
         state.setDataEmp(resp);
       }
@@ -34,9 +38,8 @@ function App() {
     }
   }, []);
 
-
   const handleChangeRoutes = (check) => {
-    if (checkToken) {
+    if (check) {
       const ftr = routes.find((ft) => ft.token === true && ft.role === empRole);
       return (
         <Routes>
@@ -69,7 +72,6 @@ function App() {
       );
     }
   };
-
 
   return (
     <>

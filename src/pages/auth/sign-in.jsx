@@ -15,18 +15,17 @@ export function SignIn() {
   const onSubmitLogin = async ({ username, password }) => {
     setLoader(true);
     const resp = await LoginEmployeeService({ username, password });
-    setLoader(false);
     if (resp) {
       setStorage("empId", resp.id);
-      setStorage("empCode", resp.code);
+      setStorage("empCode", resp.code || "");
       setStorage("empUsername", resp.username);
       setStorage("empRole", resp.role_id);
-      setLoader(false);
       window.location.reload();
       return;
     } else {
       setReq(true);
     }
+    setLoader(false);
   };
 
   return (

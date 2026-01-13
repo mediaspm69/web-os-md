@@ -37,7 +37,7 @@ const jobSchema = Yup.object().shape({
   job_mf: Yup.string().required("กรุณาระบุข้อมูล"),
   jobType_Id: Yup.string().required("กรุณาระบุข้อมูล"),
   jobStatus_Id: Yup.string().required("กรุณาระบุข้อมูล"),
-  reviewer_FirstName: Yup.string().required("กรุณาระบุข้อมูล"),
+  reviewer_Name: Yup.string().required("กรุณาระบุข้อมูล"),
   employee_Id: Yup.string().required("กรุณาระบุข้อมูล"),
   employee_FirstName: Yup.string().required("กรุณาระบุข้อมูล"),
   department_Id: Yup.string().required("กรุณาระบุข้อมูล"),
@@ -90,7 +90,7 @@ export const JobInsert = () => {
           jobType_Id: "",
           jobStatus_Id: "S01",
           recipient_Id: "",
-          reviewer_FirstName: "",
+          reviewer_Name: "",
           employee_Id: dataEmp ? dataEmp.id : "",
           employee_FirstName: dataEmp ? dataEmp.firstname : "",
           department_Id: dataEmp ? dataEmp.dpm_id ?? "" : "",
@@ -170,9 +170,9 @@ export const JobInsert = () => {
                       appearance-none                   
                       ${
                         touched &&
-                        touched.reviewer_FirstName &&
+                        touched.reviewer_Name &&
                         errors &&
-                        errors.reviewer_FirstName
+                        errors.reviewer_Name
                           ? "!border-t-red-500 "
                           : "!border-t-gray-400 "
                       }  
@@ -180,9 +180,9 @@ export const JobInsert = () => {
                       placeholder:opacity-100 
                       ${
                         touched &&
-                        touched.reviewer_FirstName &&
+                        touched.reviewer_Name &&
                         errors &&
-                        errors.reviewer_FirstName
+                        errors.reviewer_Name
                           ? "focus:!border-t-red-900 "
                           : "focus:!border-t-gray-900 "
                       }                                
@@ -191,23 +191,23 @@ export const JobInsert = () => {
                       labelProps={{
                         className: "before:content-none after:content-none",
                       }}
-                      name="reviewer_FirstName"
-                      value={values.reviewer_FirstName}
+                      name="reviewer_Name"
+                      value={values.reviewer_Name}
                       onChange={handleChange}
                       onBlur={handleBlur}
                       error={Boolean(
                         touched &&
-                          touched.reviewer_FirstName &&
+                          touched.reviewer_Name &&
                           errors &&
-                          errors.reviewer_FirstName
+                          errors.reviewer_Name
                       )}
                     />
                     {touched &&
-                      touched.reviewer_FirstName &&
+                      touched.reviewer_Name &&
                       errors &&
-                      errors.reviewer_FirstName && (
+                      errors.reviewer_Name && (
                         <p className="font-normal text-red-500 text-[12px]">
-                          {errors.reviewer_FirstName}
+                          {errors.reviewer_Name}
                         </p>
                       )}
                   </div>
@@ -228,9 +228,9 @@ export const JobInsert = () => {
                       }
                     >
                       <option value="">ประเภทงาน</option>
-                      {jobTypeData.map(({ id, name }, index) => (
+                      {jobTypeData.map(({ id, name,nameEN }, index) => (
                         <option key={index} value={id}>
-                          {name}
+                              {`${name} (${nameEN})`}
                         </option>
                       ))}
                     </select>

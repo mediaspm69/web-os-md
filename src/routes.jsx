@@ -110,12 +110,12 @@ export const routes = [
     role: "R02",
     token:true,
     pages: [
-      {
-        icon: <HomeIcon {...icon} />,
-        name: "dashboard",
-        path: "/home",
-        element: <Home />,
-      },
+      // {
+      //   icon: <HomeIcon {...icon} />,
+      //   name: "dashboard",
+      //   path: "/home",
+      //   element: <Home />,
+      // },
       {
         icon: <TableCellsIcon {...icon} />,
         name: "แจ้งงานสื่อ",

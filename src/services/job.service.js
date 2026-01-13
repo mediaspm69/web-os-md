@@ -1,9 +1,9 @@
 import axios from "axios";
 import { jobService } from "../helpers/contents";
 
-export const GetListJobService = async (page,pageSize,department_Id,role_id) => {
+export const GetListJobService = async (page,pageSize,department_Id,role_Id) => {
   try {
-    const body = JSON.stringify({ action: "getlist" ,page,pageSize,department_Id,role_id});
+    const body = JSON.stringify({ action: "getlist" ,page,pageSize,department_Id,role_Id});
     const resp = await axios.post(jobService.JOB_URL, body);
     let json = await resp.data;
     if (json && json.success) {
@@ -98,9 +98,9 @@ export const UpdateJobService = async (formData) => {
   }
 };
 
-export const UpdateJobStatusService = async (id,status_id) => {
+export const UpdateJobStatusService = async (job_Id,jobStatus_Id,recipient_Id,recipient_Name) => {
   try {
-    const body = JSON.stringify({ action: "updatestatusbyid",id,status_id});
+    const body = JSON.stringify({ action: "updatestatusbyid",job_Id,jobStatus_Id,recipient_Id,recipient_Name});
     const resp = await axios.post(jobService.JOB_URL, body);
     let json = await resp.data;
     if (json) {

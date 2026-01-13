@@ -23,7 +23,7 @@ export const jsData = [
   {
     id: "S05",
     name: "ยกเลิกงาน",
-    color: "red",
+    color: "gray",
   },
   ,
   {

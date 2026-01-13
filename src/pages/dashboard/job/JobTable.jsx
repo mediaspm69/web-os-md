@@ -25,13 +25,12 @@ import {
   ArrowPathIcon,
   LightBulbIcon,
   LinkIcon,
-  PencilIcon,
   TrashIcon,
   XMarkIcon,
 } from "@heroicons/react/24/solid";
 import MyContext from "@/context/MyContext";
 import Swal from "sweetalert2";
-import { PrivateRoute } from "@/guard/PrivateRoute";
+
 import { toThaiDateTimeString } from "@/helpers/format";
 import { dpmData, jobIsShowData, jobStaEmp, jobStaManager, jsData } from "@/data";
 import { JobHsitoryTimeline } from "./sections/JobHsitoryTimeline";
@@ -39,6 +38,8 @@ import { Form, Formik } from "formik";
 import { format } from "date-fns";
 import { th } from "date-fns/locale";
 import { OSPagination } from "@/components/OSPagination";
+import { PrivateRouteList } from "@/guard/PrivateRouteList";
+import { PrivateRoute } from "@/guard/PrivateRoute";
 
 export function JobTable() {
   const navigate = useNavigate();
@@ -61,7 +62,7 @@ export function JobTable() {
   }, [page, pageSize, dataEmp]);
 
   useEffect(() => {
-    const intervalId = setInterval(fetchRealTimeData, 10000); // Fetch every 5 seconds
+    const intervalId = setInterval(fetchRealTimeData, 10000); // Fetch every 10 seconds
     return () => clearInterval(intervalId);
   }, []);
 
@@ -74,6 +75,7 @@ export function JobTable() {
         dataEmp.dpm_id,
         dataEmp.role_id
       );
+      
       if (res) {
         setJobs(res);
       } else {
@@ -151,15 +153,16 @@ export function JobTable() {
       return "";
     };
 
-  const convertDriveIFrame = (url) => {
-    if (url) {
-      const fileId = url.match(/[-\w]{25,}/)[0];
-      return `https://lh3.googleusercontent.com/d/${fileId}`;
-    }
-    return ""; // or handle invalid format
-  };
+  // const convertDriveIFrame = (url) => {
+  //   if (url) {
+  //     const fileId = url.match(/[-\w]{25,}/)[0];
+  //     return `https://lh3.googleusercontent.com/d/${fileId}`;
+  //   }
+  //   return ""; // or handle invalid format
+  // };
 
   const deleteJob = async (id) => {
+   
     await Swal.fire({
       title: "คุณแน่ใจเหรอ?",
       text: "คุณจะไม่สามารถย้อนกลับการเปลี่ยนแปลงนี้ได้!",
@@ -167,22 +170,21 @@ export function JobTable() {
       showCancelButton: true,
       showConfirmButton: true,
       confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
+       cancelButtonColor: "#CACACA",
       confirmButtonText: "ยืนยัน",
-      cancelButtonText: "ออก",
+      cancelButtonText: "ยกเลิก",
     }).then(async (result) => {
       if (result.isConfirmed) {
         setLoader(true);
         const resp = await DeleteJobService(id);
         setLoader(false);
         if (resp && resp.success) {
-          Swal.fire({
-            title: "สำเร็จ!",
-            text: "ไฟล์ของคุณถูกลบแล้ว.",
-            icon: "success",
-            showConfirmButton: false,
-            timer: 1500,
-          });
+          // Swal.fire({
+          //   title: "ลบสำเร็จ",
+          //   icon: "success",
+          //   showConfirmButton: false,
+          //   timer: 1500,
+          // });
           await fetchData();
         }
       }
@@ -196,14 +198,45 @@ export function JobTable() {
     }
   };
 
-  const updateJobStatus = async (id, status_id, status_name, detail) => {
+  const empRemoveIsShow = async (id, isShow) => {
+     handleClose()
+        await Swal.fire({
+      title: "คุณแน่ใจเหรอ?",
+      text: "คุณจะไม่สามารถย้อนกลับการเปลี่ยนแปลงนี้ได้!",
+      icon: "warning",
+      showCancelButton: true,
+      showConfirmButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#CACACA",
+      confirmButtonText: "ยืนยัน",
+      cancelButtonText: "ยกเลิก",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        setLoader(true);
+        const resp = await RemoveIsShowService(id, isShow);       
+        if (resp && resp.success) {
+          // Swal.fire({
+          //   title: "ลบสำเร็จ",
+          //   icon: "success",
+          //   showConfirmButton: false,
+          //   timer: 1500,
+          // });
+          await fetchData();
+        }
+        setLoader(false);
+      }
+    });
+  };
+
+  const updateJobStatus = async (id, status_id, status_name, detail,rec_id,rec_name) => {
     handleClose();
     setLoader(true);
-    const resp = await UpdateJobStatusService(id, status_id);
+    const resp = await UpdateJobStatusService(id, status_id,rec_id,rec_name);
+    
     if (resp && resp.success) {
       const resp2 = await InsertJobHistoryService({
         name: status_name,
-        detail: detail,
+        detail: detail ? detail: "",
         job_id: id,
       });
 
@@ -227,7 +260,7 @@ export function JobTable() {
             </Typography>
 
             <div className="flex justify-center items-center gap-4">
-              <PrivateRoute
+              <PrivateRouteList
                 role={(dataEmp && dataEmp.role_id) || ""}
                 roles={["R02"]}
               >
@@ -242,14 +275,14 @@ export function JobTable() {
                     แจ้งงานใหม่
                   </Typography>
                 </Button>
-              </PrivateRoute>
+              </PrivateRouteList>
               <IconButton color="green" onClick={async () => await fetchData()}>
                 <ArrowPathIcon className="w-5 h-5" />
               </IconButton>
             </div>
           </CardHeader>
           <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
-            <PrivateRoute
+            <PrivateRouteList
               role={(dataEmp && dataEmp.role_id) || ""}
               roles={["R01", "R02"]}
             >
@@ -261,7 +294,7 @@ export function JobTable() {
                         key={index}
                         onClick={async () => await handleOpen(iJob)}
                       >
-                        <CardBody className="grid grid-cols-2">
+                        <CardBody className="grid md:grid-cols-2 sm:grid-cols-1">
                           <div className="flex flex-row justify-start items-center gap-2">
                             <div>{/* <Avatar alt="5" /> */}</div>
                             <div className="flex flex-col">
@@ -269,11 +302,14 @@ export function JobTable() {
                                 {iJob.job_Code}
                               </Typography>
                               <Typography variant="h6" color="gray">
-                                {`หัวข้อ: ${iJob.job_Name}`}
+                                {`หัวข้อ: ${iJob.job_Name || ""}`}
+                              </Typography> 
+                              <Typography variant="h6" color="gray">
+                                {`ผู้แจ้ง: ${iJob.employee_FirstName || ""} ผู้ตรวจสอบ: ${iJob.reviewer_Name || ""}`}
                               </Typography>
                               {iJob.department_Id && (
                                 <Typography variant="h6" color="gray">
-                                  {`แผนก: ${iJob.code || ""} ${
+                                  {`แผนก: ${
                                     dpmData.find(
                                       (fd) => fd.id === iJob.department_Id
                                     )?.name || ""
@@ -285,7 +321,14 @@ export function JobTable() {
                               </Typography>
                             </div>
                           </div>
-                          <div className="flex justify-end items-center">
+                          <div className="flex flex-col justify-center md:items-end items-start gap-2">
+                            {iJob.recipient_Name && (
+                              <Chip
+                                color="green"
+                                value={iJob.recipient_Name}
+                                className="w-fit h-fit"
+                              />
+                            )}
                             {iJob.jobStatus_Id &&
                               jsData.map((ijs, index) => {
                                 if (ijs.id === iJob.jobStatus_Id) {
@@ -318,8 +361,8 @@ export function JobTable() {
                   <></>
                 )}
               </div>
-            </PrivateRoute>
-            <PrivateRoute
+            </PrivateRouteList>
+            <PrivateRouteList
               role={(dataEmp && dataEmp.role_id) || ""}
               roles={["R99"]}
             >
@@ -359,10 +402,10 @@ export function JobTable() {
                           job_Code,
                           job_Name,
                           employee_FirstName,
-                          reviewer_FirstName,
+                          reviewer_Name,
                           job_CreationDate,
                           jobStatus_Id,
-                          isShow
+                          isShow,
                         },
                         index
                       ) => {
@@ -378,7 +421,6 @@ export function JobTable() {
                               <div className="flex items-center gap-4">
                                 {/* <Avatar src={img} alt={name} size="sm" /> */}
                                 <Typography
-                     
                                   color="blue-gray"
                                   className="font-bold text-[14px]"
                                 >
@@ -389,7 +431,7 @@ export function JobTable() {
                             <td className={className}>
                               <Typography
                                 variant="small"
-                                  className="font-medium text-[14px] text-blue-gray-600"
+                                className="font-medium text-[14px] text-blue-gray-600"
                               >
                                 {job_Name}
                               </Typography>
@@ -407,7 +449,7 @@ export function JobTable() {
                                 variant="small"
                                 className="font-medium text-[14px] text-blue-gray-600"
                               >
-                                {reviewer_FirstName}
+                                {reviewer_Name}
                               </Typography>
                             </td>
 
@@ -432,7 +474,7 @@ export function JobTable() {
                                     await removeIsShow(job_Id, isShow)
                                   }
                                 >
-                                 {handleJobIsShowData(isShow)}
+                                  {handleJobIsShowData(isShow)}
                                 </IconButton>
                                 <IconButton
                                   onClick={async () => await deleteJob(job_Id)}
@@ -448,35 +490,37 @@ export function JobTable() {
                     )}
                 </tbody>
               </table>
-            </PrivateRoute>
+            </PrivateRouteList>
           </CardBody>
         </Card>
       </div>
       <Dialog open={open} handler={handleClose} size="xl">
         <Formik
           initialValues={{
-            id: itemJob ? itemJob.job_Id ?? "" : "",
-            name: itemJob ? itemJob.job_Name ?? "" : "",
-            detail: itemJob ? itemJob.job_Detail ?? "" : "",
-            dateTime: itemJob
+            job_Id: itemJob ? itemJob.job_Id ?? "" : "",
+            job_Name: itemJob ? itemJob.job_Name ?? "" : "",
+            job_Detail: itemJob ? itemJob.job_Detail ?? "" : "",
+            job_DateTime: itemJob
               ? format(itemJob.job_DateTime, "yyyy-MM-dd HH:mm", {
                   locale: th,
                 }) ?? ""
               : "",
             countUpdate: "",
-            target: itemJob ? itemJob.job_Target ?? "" : "",
-            objective: itemJob ? itemJob.job_Objective ?? "" : "",
-            mode_tone: itemJob ? itemJob.job_mt ?? "" : "",
-            mes_format: itemJob ? itemJob.job_mf ?? "" : "",
-            file: itemJob ? itemJob.job_file ?? "" : "",
-            type_id: itemJob ? itemJob.jobType_Id ?? "" : "",
-            status_id: itemJob ? itemJob.jobStatus_Id ?? "" : "",
-            rec_id: itemJob ? itemJob.recipient_Id ?? "" : "",
-            rvw_name: dataEmp ? dataEmp.reviewer_FirstName : "",
-            emp_id: dataEmp ? dataEmp.employee_Id ?? "" : "",
-            emp_name: dataEmp ? dataEmp.employee_FirstName : "",
-            dpm_id: itemJob ? itemJob.department_Id ?? "" : "",
-            pst_id: itemJob ? itemJob.position_Id ?? "" : "",
+            job_Target: itemJob ? itemJob.job_Target ?? "" : "",
+            job_Objective: itemJob ? itemJob.job_Objective ?? "" : "",
+            job_mt: itemJob ? itemJob.job_mt ?? "" : "",
+            job_mf: itemJob ? itemJob.job_mf ?? "" : "",
+            job_file: itemJob ? itemJob.job_file ?? "" : "",
+            jobType_Id: itemJob ? itemJob.jobType_Id ?? "" : "",
+            jobStatus_Id: itemJob ? itemJob.jobStatus_Id ?? "" : "",
+            recipient_Id: itemJob ? itemJob.recipient_Id ?? "" : "",
+            recipient_Name: itemJob ? itemJob.recipient_Name ?? "" : "",
+            reviewer_Name: itemJob ? itemJob.reviewer_Name : "",
+            employee_Id: itemJob ? itemJob.employee_Id ?? "" : "",
+            employee_FirstName: itemJob ? itemJob.employee_FirstName : "",
+            department_Id: itemJob ? itemJob.department_Id ?? "" : "",
+            position_Id: itemJob ? itemJob.position_Id ?? "" : "",
+            isShow: itemJob ? itemJob.isShow ?? "" : "",
             history: "",
           }}
         >
@@ -484,7 +528,7 @@ export function JobTable() {
             <Form>
               <div className="flex flex-row justify-between p-4 ">
                 <Typography className="text-[18px] font-bold">
-                  {values.name || ""}
+                  {values.job_Name || ""}
                 </Typography>
                 <IconButton
                   onClick={handleClose}
@@ -495,16 +539,16 @@ export function JobTable() {
               </div>
 
               <DialogBody className="max-h-[70vh] overflow-scroll">
-                <div className="w-full grid grid-cols-2">
+                <div className="w-full grid md:grid-cols-2 grid-cols-1">
                   <div className="w-full">
-                    <div className="grid grid-cols-2 bg-[#FAFAFA] p-2 rounded-md gap-2">
+                    <div className="grid grid-cols-2  bg-[#FAFAFA] p-2 rounded-md gap-2">
                       <div className="w-full">
                         <div>
                           <Typography className="text-[16px] font-normal text-blue-gray-700">
                             ผู้สั่งงาน
                           </Typography>
                           <Typography className="text-[16px] font-normal text-black">
-                            {values.name || ""}
+                            {values.employee_FirstName || ""}
                           </Typography>
                         </div>
                         <div>
@@ -512,18 +556,18 @@ export function JobTable() {
                             ผู้ตรวจสอบงาน
                           </Typography>
                           <Typography className="text-[16px] font-normal text-black">
-                            {values.vew_name || ""}
+                            {values.reviewer_Name || ""}
                           </Typography>
                         </div>
                       </div>
-                      <div className=" w-full">
+                      <div className="w-full">
                         <div>
                           <Typography className="text-[16px] font-normal text-blue-gray-700">
                             แผนก
                           </Typography>
                           <Typography className="text-[16px] font-normal text-black">
                             {dpmData.find(
-                              (fd) => fd.id === values.dpm_id.toString()
+                              (fd) => fd?.id === values.department_Id
                             )?.name || ""}
                           </Typography>
                         </div>
@@ -532,7 +576,7 @@ export function JobTable() {
                             กำหนดส่ง
                           </Typography>
                           <Typography className="text-[16px] font-normal text-black">
-                            {toThaiDateTimeString(values.dateTime)}
+                            {toThaiDateTimeString(values.job_DateTime)}
                           </Typography>
                         </div>
                       </div>
@@ -548,7 +592,7 @@ export function JobTable() {
                               วัตถุประสงค์
                             </Typography>
                             <Typography className="text-[16px] font-normal text-black">
-                              {values.objective || ""}
+                              {values.job_Objective || ""}
                             </Typography>
                           </div>
                         </div>
@@ -558,7 +602,7 @@ export function JobTable() {
                               กลุ่มเป้าหมาย
                             </Typography>
                             <Typography className="text-[16px] font-normal text-black">
-                              {values.target || ""}
+                              {values.job_Target || ""}
                             </Typography>
                           </div>
                         </div>
@@ -571,7 +615,7 @@ export function JobTable() {
                               MODE / TONE
                             </Typography>
                             <Typography className="text-[16px] font-normal text-black">
-                              {values.mode_tone || ""}
+                              {values.job_mt || ""}
                             </Typography>
                           </div>
                         </div>
@@ -581,7 +625,7 @@ export function JobTable() {
                               Key Message
                             </Typography>
                             <Typography className="text-[16px] font-normal text-black">
-                              {values.mes_format || ""}
+                              {values.job_mf || ""}
                             </Typography>
                           </div>
                         </div>
@@ -592,16 +636,16 @@ export function JobTable() {
                             รายละเอียดเพิ่มเติม
                           </Typography>
                           <Typography className="text-[16px] font-normal text-black">
-                            {values.detail || ""}
+                            {values.job_Detail || ""}
                           </Typography>
                         </div>
                       </div>
-                      {values.file && (
+                      {values.job_file && (
                         <div className="flex justify-end ">
                           <div className="flex gap-2">
                             <a
                               className="w-fit text-green-500"
-                              href={values.file}
+                              href={values.job_file}
                               download="proposed_file_name"
                               target="_blank"
                             >
@@ -620,8 +664,8 @@ export function JobTable() {
                     </Typography>
                     <div className="py-4 flex flex-col justify-between">
                       <JobHsitoryTimeline itemHistory={jobHistory} />
-                      <PrivateRoute
-                        role={values.status_id}
+                      <PrivateRouteList
+                        role={values.jobStatus_Id}
                         roles={["S01", "S02"]}
                       >
                         <div className="w-full max-h-[20vh] pt-4">
@@ -640,71 +684,145 @@ export function JobTable() {
                             onBlur={handleBlur}
                           />
                         </div>
-                      </PrivateRoute>
+                      </PrivateRouteList>
                     </div>
                   </div>
                 </div>
               </DialogBody>
 
-              <DialogFooter className="flex flex-row gap-2">
-                <PrivateRoute role={dataEmp && dataEmp.role_id} roles={["R01"]}>
-                  {jobStaManager
-                    .filter((ft) => ft.status_id === values.status_id)
-                    .map((item, index) => (
-                      <Button
-                        key={index}
-                        type="button"
-                        onClick={async () => {
-                          await updateJobStatus(
-                            values.id,
-                            item.js_id,
-                            item.name,
-                            values.history
-                          );
-                        }}
-                        variant="gradient"
-                        color={item.color ? item.color : "gray"}
-                      >
-                        <span>{item.name}</span>
-                      </Button>
-                    ))}
-                </PrivateRoute>
-                <PrivateRoute role={dataEmp && dataEmp.role_id} roles={["R02"]}>
-                  <PrivateRoute
-                    role={values.status_id || ""}
-                    roles={["S01", "S02"]}
+              <DialogFooter className="flex flex-row justify-between items-center ">
+                 {values.recipient_Name && (
+                              <Chip
+                                color="green"
+                                value={values.recipient_Name}
+                                className="w-fit h-fit"
+                              />
+                            )}
+                <div className="flex flex-row gap-2">
+                           {values.jobStatus_Id === "S01" ? (
+                  <PrivateRouteList
+                    role={dataEmp && dataEmp.role_id}
+                    roles={["R01"]}
                   >
+                    {jobStaManager
+                      .filter((ft) => ft.status_id === values.jobStatus_Id)
+                      .map((item, index) => (
+                        <Button
+                          key={index}
+                          type="button"
+                          onClick={async () => {
+                            await updateJobStatus(
+                              values.job_Id,
+                              item.js_id,
+                              item.name,
+                              values.history,
+                              dataEmp.id,
+                              dataEmp.firstname
+                            );
+                          }}
+                          variant="gradient"
+                          color={item.color ? item.color : "gray"}
+                        >
+                          <span>{item.name}</span>
+                        </Button>
+                      ))}
+                  </PrivateRouteList>
+                ) : (
+                  <PrivateRoute
+                    rolePrimary={(dataEmp && dataEmp.id) || ""}
+                    rolesTrial={values.recipient_Id || ""}
+                  >
+                    <PrivateRouteList
+                      role={dataEmp && dataEmp.role_id}
+                      roles={["R01"]}
+                    >
+                      {jobStaManager
+                        .filter((ft) => ft.status_id === values.jobStatus_Id)
+                        .map((item, index) => (
+                          <Button
+                            key={index}
+                            type="button"
+                            onClick={async () => {
+                              await updateJobStatus(
+                                values.job_Id,
+                                item.js_id,
+                                item.name,
+                                values.history,
+                                dataEmp.id,
+                                dataEmp.firstname
+                              );
+                            }}
+                            variant="gradient"
+                            color={item.color ? item.color : "gray"}
+                          >
+                            <span>{item.name}</span>
+                          </Button>
+                        ))}
+                    </PrivateRouteList>
+                  </PrivateRoute>
+                )}
+
+                <PrivateRouteList
+                  role={dataEmp && dataEmp.role_id}
+                  roles={["R02"]}
+                >
+                  <PrivateRoute
+                    rolePrimary={(dataEmp && dataEmp.id) || ""}
+                    rolesTrial={values.employee_Id || ""}
+                  >
+                    <PrivateRouteList
+                      role={values.jobStatus_Id || ""}
+                      roles={["S01", "S02"]}
+                    >
+                      <Button
+                        type="button"
+                        variant="gradient"
+                        color={"yellow"}
+                        onClick={() =>
+                          navigate("update", { state: values.job_Id })
+                        }
+                      >
+                        <span>แก้ไขข้อมูล</span>
+                      </Button>
+                    </PrivateRouteList>
+
+                    {jobStaEmp
+                      .filter((ft) => ft.status_id === values.jobStatus_Id)
+                      .map((item, index) => (
+                        <Button
+                          key={index}
+                          type="button"
+                          variant="gradient"
+                          color={item.color ? item.color : "gray"}
+                          onClick={async () => {
+                            await updateJobStatus(
+                              values.job_Id,
+                              item.js_id,
+                              item.name,
+                              values.history,
+                              values.position_Id,
+                              values.recipient_Name
+                            );
+                          }}
+                        >
+                          <span>{item.name}</span>
+                        </Button>
+                      ))}
+
                     <Button
                       type="button"
                       variant="gradient"
-                      color={"yellow"}
-                      onClick={() => navigate("update", { state: values.id })}
+                      color={"red"}
+                      onClick={async () =>
+                        await empRemoveIsShow(values.job_Id, values.isShow)
+                      }
                     >
-                      <span>แก้ไขข้อมูล</span>
+                      <span>ลบ</span>
                     </Button>
                   </PrivateRoute>
-
-                  {jobStaEmp
-                    .filter((ft) => ft.status_id === values.status_id)
-                    .map((item, index) => (
-                      <Button
-                        key={index}
-                        type="button"
-                        variant="gradient"
-                        color={item.color ? item.color : "gray"}
-                        onClick={async () => {
-                          await updateJobStatus(
-                            values.id,
-                            item.js_id,
-                            item.name,
-                            values.history
-                          );
-                        }}
-                      >
-                        <span>{item.name}</span>
-                      </Button>
-                    ))}
-                </PrivateRoute>
+                </PrivateRouteList>
+                </div>
+       
               </DialogFooter>
             </Form>
           )}
