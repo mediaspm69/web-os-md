@@ -32,7 +32,13 @@ import MyContext from "@/context/MyContext";
 import Swal from "sweetalert2";
 
 import { toThaiDateTimeString } from "@/helpers/format";
-import { dpmData, jobIsShowData, jobStaEmp, jobStaManager, jsData } from "@/data";
+import {
+  dpmData,
+  jobIsShowData,
+  jobStaEmp,
+  jobStaManager,
+  jsData,
+} from "@/data";
 import { JobHsitoryTimeline } from "./sections/JobHsitoryTimeline";
 import { Form, Formik } from "formik";
 import { format } from "date-fns";
@@ -75,7 +81,7 @@ export function JobTable() {
         dataEmp.dpm_id,
         dataEmp.role_id
       );
-      
+
       if (res) {
         setJobs(res);
       } else {
@@ -143,15 +149,15 @@ export function JobTable() {
     return "";
   };
 
-    const handleJobIsShowData = (isShow) => {
-      if (isShow) {
-        const sta = jobIsShowData.find((fd) => fd?.status === isShow);
-        if (sta) {
-          return <LightBulbIcon color={sta?.color} className={`w-5 h-5 `} />;
-        }
+  const handleJobIsShowData = (isShow) => {
+    if (isShow) {
+      const sta = jobIsShowData.find((fd) => fd?.status === isShow);
+      if (sta) {
+        return <LightBulbIcon color={sta?.color} className={`w-5 h-5 `} />;
       }
-      return "";
-    };
+    }
+    return "";
+  };
 
   // const convertDriveIFrame = (url) => {
   //   if (url) {
@@ -162,7 +168,6 @@ export function JobTable() {
   // };
 
   const deleteJob = async (id) => {
-   
     await Swal.fire({
       title: "คุณแน่ใจเหรอ?",
       text: "คุณจะไม่สามารถย้อนกลับการเปลี่ยนแปลงนี้ได้!",
@@ -170,7 +175,7 @@ export function JobTable() {
       showCancelButton: true,
       showConfirmButton: true,
       confirmButtonColor: "#3085d6",
-       cancelButtonColor: "#CACACA",
+      cancelButtonColor: "#CACACA",
       confirmButtonText: "ยืนยัน",
       cancelButtonText: "ยกเลิก",
     }).then(async (result) => {
@@ -199,8 +204,8 @@ export function JobTable() {
   };
 
   const empRemoveIsShow = async (id, isShow) => {
-     handleClose()
-        await Swal.fire({
+    handleClose();
+    await Swal.fire({
       title: "คุณแน่ใจเหรอ?",
       text: "คุณจะไม่สามารถย้อนกลับการเปลี่ยนแปลงนี้ได้!",
       icon: "warning",
@@ -213,7 +218,7 @@ export function JobTable() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         setLoader(true);
-        const resp = await RemoveIsShowService(id, isShow);       
+        const resp = await RemoveIsShowService(id, isShow);
         if (resp && resp.success) {
           // Swal.fire({
           //   title: "ลบสำเร็จ",
@@ -228,15 +233,22 @@ export function JobTable() {
     });
   };
 
-  const updateJobStatus = async (id, status_id, status_name, detail,rec_id,rec_name) => {
+  const updateJobStatus = async (
+    id,
+    status_id,
+    status_name,
+    detail,
+    rec_id,
+    rec_name
+  ) => {
     handleClose();
     setLoader(true);
-    const resp = await UpdateJobStatusService(id, status_id,rec_id,rec_name);
-    
+    const resp = await UpdateJobStatusService(id, status_id, rec_id, rec_name);
+
     if (resp && resp.success) {
       const resp2 = await InsertJobHistoryService({
         name: status_name,
-        detail: detail ? detail: "",
+        detail: detail ? detail : "",
         job_id: id,
       });
 
@@ -303,9 +315,11 @@ export function JobTable() {
                               </Typography>
                               <Typography variant="h6" color="gray">
                                 {`หัวข้อ: ${iJob.job_Name || ""}`}
-                              </Typography> 
+                              </Typography>
                               <Typography variant="h6" color="gray">
-                                {`ผู้แจ้ง: ${iJob.employee_FirstName || ""} ผู้ตรวจสอบ: ${iJob.reviewer_Name || ""}`}
+                                {`ผู้แจ้ง: ${
+                                  iJob.employee_FirstName || ""
+                                } ผู้ตรวจสอบ: ${iJob.reviewer_Name || ""}`}
                               </Typography>
                               {iJob.department_Id && (
                                 <Typography variant="h6" color="gray">
@@ -321,7 +335,7 @@ export function JobTable() {
                               </Typography>
                             </div>
                           </div>
-                          <div className="flex flex-col justify-center md:items-end items-start gap-2">
+                          <div className="flex md:flex-col md:justify-center justify-start md:items-end items-start gap-2">
                             {iJob.recipient_Name && (
                               <Chip
                                 color="green"
@@ -380,11 +394,11 @@ export function JobTable() {
                     ].map((el) => (
                       <th
                         key={el}
-                        className="border-b border-blue-gray-50 py-3 px-5 text-left text-[14px]"
+                        className="border-b border-blue-gray-50 py-3 px-5 text-left text-[14px] "
                       >
                         <Typography
                           variant="small"
-                          className="text-[16px] font-bold uppercase text-blue-gray-400"
+                          className="text-[16px] font-bold uppercase text-blue-gray-400 "
                         >
                           {el}
                         </Typography>
@@ -424,39 +438,39 @@ export function JobTable() {
                                   color="blue-gray"
                                   className="font-bold text-[14px]"
                                 >
-                                  {job_Code}
+                                  {job_Code || ""}
                                 </Typography>
                               </div>
                             </td>
                             <td className={className}>
                               <Typography
                                 variant="small"
-                                className="font-medium text-[14px] text-blue-gray-600"
+                                className="font-medium text-[14px] text-blue-gray-600 w-[200px]"
                               >
-                                {job_Name}
+                                {job_Name || ""}
                               </Typography>
                             </td>
                             <td className={className}>
                               <Typography
                                 variant="small"
-                                className="font-medium text-[14px] text-blue-gray-600"
+                                className="font-medium text-[14px] text-blue-gray-600 w-[100px]"
                               >
-                                {employee_FirstName}
+                                {employee_FirstName || ""}
                               </Typography>
                             </td>
                             <td className={className}>
                               <Typography
                                 variant="small"
-                                className="font-medium text-[14px] text-blue-gray-600"
+                                className="font-medium text-[14px] text-blue-gray-600 w-[100px]"
                               >
-                                {reviewer_Name}
+                                {reviewer_Name || ""}
                               </Typography>
                             </td>
 
                             <td className={className}>
                               <Typography
                                 variant="small"
-                                className="font-medium text-[14px] text-blue-gray-600"
+                                className="font-medium text-[14px] text-blue-gray-600 w-[200px]"
                               >
                                 {toThaiDateTimeString(job_CreationDate)}
                               </Typography>
@@ -526,16 +540,15 @@ export function JobTable() {
         >
           {({ values, handleChange, handleBlur }) => (
             <Form>
-              <div className="flex flex-row justify-between p-4 ">
+              <div className="flex flex-row justify-between p-2 gap-2 ">
                 <Typography className="text-[18px] font-bold">
                   {values.job_Name || ""}
                 </Typography>
-                <IconButton
+
+                <XMarkIcon
+                  className="w-8 h-8 text-red-500"
                   onClick={handleClose}
-                  className="bg-white shadow-sm"
-                >
-                  <XMarkIcon className="w-8 h-8 text-red-500" />
-                </IconButton>
+                />
               </div>
 
               <DialogBody className="md:max-h-[70vh] max-h-[50vh] overflow-scroll">
@@ -692,49 +705,17 @@ export function JobTable() {
 
               <DialogFooter className="flex flex-row justify-between items-center gap-2">
                 <div>
-                    {values.recipient_Name && (
-                              <Chip
-                                color="green"
-                                value={values.recipient_Name}
-                                className="w-fit h-fit"
-                              />
-                            )}
+                  {values.recipient_Name && (
+                    <Chip
+                      color="green"
+                      value={values.recipient_Name}
+                      className="w-fit h-fit"
+                    />
+                  )}
                 </div>
-               
+
                 <div className="flex flex-row gap-2">
-                           {values.jobStatus_Id === "S01" ? (
-                  <PrivateRouteList
-                    role={dataEmp && dataEmp.role_id}
-                    roles={["R01"]}
-                  >
-                    {jobStaManager
-                      .filter((ft) => ft.status_id === values.jobStatus_Id)
-                      .map((item, index) => (
-                        <Button
-                          key={index}
-                          type="button"
-                          onClick={async () => {
-                            await updateJobStatus(
-                              values.job_Id,
-                              item.js_id,
-                              item.name,
-                              values.history,
-                              dataEmp.id,
-                              dataEmp.firstname
-                            );
-                          }}
-                          variant="gradient"
-                          color={item.color ? item.color : "gray"}
-                        >
-                          <span>{item.name}</span>
-                        </Button>
-                      ))}
-                  </PrivateRouteList>
-                ) : (
-                  <PrivateRoute
-                    rolePrimary={(dataEmp && dataEmp.id) || ""}
-                    rolesTrial={values.recipient_Id || ""}
-                  >
+                  {values.jobStatus_Id === "S01" ? (
                     <PrivateRouteList
                       role={dataEmp && dataEmp.role_id}
                       roles={["R01"]}
@@ -762,70 +743,101 @@ export function JobTable() {
                           </Button>
                         ))}
                     </PrivateRouteList>
-                  </PrivateRoute>
-                )}
-
-                <PrivateRouteList
-                  role={dataEmp && dataEmp.role_id}
-                  roles={["R02"]}
-                >
-                  <PrivateRoute
-                    rolePrimary={(dataEmp && dataEmp.id) || ""}
-                    rolesTrial={values.employee_Id || ""}
-                  >
-                    <PrivateRouteList
-                      role={values.jobStatus_Id || ""}
-                      roles={["S01", "S02"]}
+                  ) : (
+                    <PrivateRoute
+                      rolePrimary={(dataEmp && dataEmp.id) || ""}
+                      rolesTrial={values.recipient_Id || ""}
                     >
+                      <PrivateRouteList
+                        role={dataEmp && dataEmp.role_id}
+                        roles={["R01"]}
+                      >
+                        {jobStaManager
+                          .filter((ft) => ft.status_id === values.jobStatus_Id)
+                          .map((item, index) => (
+                            <Button
+                              key={index}
+                              type="button"
+                              onClick={async () => {
+                                await updateJobStatus(
+                                  values.job_Id,
+                                  item.js_id,
+                                  item.name,
+                                  values.history,
+                                  dataEmp.id,
+                                  dataEmp.firstname
+                                );
+                              }}
+                              variant="gradient"
+                              color={item.color ? item.color : "gray"}
+                            >
+                              <span>{item.name}</span>
+                            </Button>
+                          ))}
+                      </PrivateRouteList>
+                    </PrivateRoute>
+                  )}
+
+                  <PrivateRouteList
+                    role={dataEmp && dataEmp.role_id}
+                    roles={["R02"]}
+                  >
+                    <PrivateRoute
+                      rolePrimary={(dataEmp && dataEmp.id) || ""}
+                      rolesTrial={values.employee_Id || ""}
+                    >
+                      <PrivateRouteList
+                        role={values.jobStatus_Id || ""}
+                        roles={["S01", "S02"]}
+                      >
+                        <Button
+                          type="button"
+                          variant="gradient"
+                          color={"yellow"}
+                          onClick={() =>
+                            navigate("update", { state: values.job_Id })
+                          }
+                        >
+                          <span>แก้ไขข้อมูล</span>
+                        </Button>
+                      </PrivateRouteList>
+
+                      {jobStaEmp
+                        .filter((ft) => ft.status_id === values.jobStatus_Id)
+                        .map((item, index) => (
+                          <Button
+                            key={index}
+                            type="button"
+                            variant="gradient"
+                            color={item.color ? item.color : "gray"}
+                            onClick={async () => {
+                              await updateJobStatus(
+                                values.job_Id,
+                                item.js_id,
+                                item.name,
+                                values.history,
+                                values.position_Id,
+                                values.recipient_Name
+                              );
+                            }}
+                          >
+                            <span>{item.name}</span>
+                          </Button>
+                        ))}
+
                       <Button
                         type="button"
                         variant="gradient"
-                        color={"yellow"}
-                        onClick={() =>
-                          navigate("update", { state: values.job_Id })
+                        color={"red"}
+                        onClick={async () =>
+                          await empRemoveIsShow(values.job_Id, values.isShow)
                         }
                       >
-                        <span>แก้ไขข้อมูล</span>
+                        <span>ลบ</span>
                       </Button>
-                    </PrivateRouteList>
-
-                    {jobStaEmp
-                      .filter((ft) => ft.status_id === values.jobStatus_Id)
-                      .map((item, index) => (
-                        <Button
-                          key={index}
-                          type="button"
-                          variant="gradient"
-                          color={item.color ? item.color : "gray"}
-                          onClick={async () => {
-                            await updateJobStatus(
-                              values.job_Id,
-                              item.js_id,
-                              item.name,
-                              values.history,
-                              values.position_Id,
-                              values.recipient_Name
-                            );
-                          }}
-                        >
-                          <span>{item.name}</span>
-                        </Button>
-                      ))}
-
-                    <Button
-                      type="button"
-                      variant="gradient"
-                      color={"red"}
-                      onClick={async () =>
-                        await empRemoveIsShow(values.job_Id, values.isShow)
-                      }
-                    >
-                      <span>ลบ</span>
-                    </Button>
-                  </PrivateRoute>
-                </PrivateRouteList>
+                    </PrivateRoute>
+                  </PrivateRouteList>
                 </div>
-       
               </DialogFooter>
             </Form>
           )}

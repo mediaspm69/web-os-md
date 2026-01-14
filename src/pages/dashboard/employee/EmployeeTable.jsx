@@ -271,28 +271,28 @@ export function EmployeeTable() {
                           <div>
                             <Typography                   
                               color="blue-gray"
-                              className="font-semibold text-[14px]"
+                              className="font-semibold text-[14px] w-[100px]"
                             >
                               {username}
                             </Typography>
-                            <Typography className="text-[14px] font-normal text-blue-gray-500">
+                            <Typography className="text-[14px] font-normal text-blue-gray-500 w-[100px]">
                               {email}
                             </Typography>
                           </div>
                         </div>
                       </td>
                       <td className={className}>
-                        <Typography className="text-[14px] font-normal text-blue-gray-600">
+                        <Typography className="text-[14px] font-normal text-blue-gray-600 w-[150px]">
                           {`${firstname} ${lastname}`}
                         </Typography>
                       </td>
                       <td className={className}>
-                        <Typography className="text-[14px] font-normal text-blue-gray-600">
+                        <Typography className="text-[14px] font-normal text-blue-gray-600 w-[150px]">
                           {departmentData(dpm_id)}
                         </Typography>
                       </td>
                       <td className={className}>
-                        <Typography className="text-[14px] font-normal text-blue-gray-600">
+                        <Typography className="text-[14px] font-normal text-blue-gray-600 w-[100px]">
                           {rolData(role_id)}
                         </Typography>
                       </td>

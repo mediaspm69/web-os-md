@@ -310,7 +310,7 @@ export const JobInsert = () => {
                     >
                       กำหนดส่ง <span className="text-red-500">*</span>
                     </Typography>
-                    <div className="flex gap-2">
+                    <div className="flex md:flex-row flex-col gap-2">
                       <Popover placement="bottom">
                         <PopoverHandler>
                           <Input
