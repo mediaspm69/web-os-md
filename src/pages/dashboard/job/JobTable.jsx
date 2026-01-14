@@ -538,7 +538,7 @@ export function JobTable() {
                 </IconButton>
               </div>
 
-              <DialogBody className="max-h-[70vh] overflow-scroll">
+              <DialogBody className="md:max-h-[70vh] max-h-[50vh] overflow-scroll">
                 <div className="w-full grid md:grid-cols-2 grid-cols-1">
                   <div className="w-full">
                     <div className="grid grid-cols-2  bg-[#FAFAFA] p-2 rounded-md gap-2">
@@ -582,7 +582,7 @@ export function JobTable() {
                       </div>
                     </div>
                     <Typography className="text-[16px] font-bold my-4 text-black">
-                      รายละเอียด (ฺBRIEF)
+                      รายละเอียด (BRIEF)
                     </Typography>
                     <div className="bg-[#FAFAFA] pb-4">
                       <div className="grid grid-cols-2  p-2 rounded-md gap-2">
@@ -690,14 +690,17 @@ export function JobTable() {
                 </div>
               </DialogBody>
 
-              <DialogFooter className="flex flex-row justify-between items-center ">
-                 {values.recipient_Name && (
+              <DialogFooter className="flex flex-row justify-between items-center gap-2">
+                <div>
+                    {values.recipient_Name && (
                               <Chip
                                 color="green"
                                 value={values.recipient_Name}
                                 className="w-fit h-fit"
                               />
                             )}
+                </div>
+               
                 <div className="flex flex-row gap-2">
                            {values.jobStatus_Id === "S01" ? (
                   <PrivateRouteList
