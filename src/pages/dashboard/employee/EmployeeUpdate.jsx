@@ -9,12 +9,7 @@ import {
 // import { GetListPositionService } from "@/services/position.service";
 // import { GetListRoleService } from "@/services/role.service";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
-import {
-  Card,
-  Input,
-  Button,
-  Typography,
-} from "@material-tailwind/react";
+import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import { Form, Formik } from "formik";
 import { useContext, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -82,7 +77,7 @@ export function EmployeeUpdate() {
   };
   return (
     <div className="flex justify-center min-h-[75vh] mt-4">
-      <Card color="transparent" shadow={true} className="p-6 xl:min-w-[960px]" >
+      <Card color="transparent" shadow={true} className="p-6 xl:min-w-[960px]">
         <Typography variant="h3" className="text-[#0057A1] text-center">
           อัปเดตข้อมูลพนักงาน
         </Typography>
@@ -325,54 +320,44 @@ export function EmployeeUpdate() {
                         <option value={id}>{name}</option>
                       ))}
                     </select>
-                  </div>      
-                   <div className="flex flex-col xl:w-full p-1">
-                             <select
-                                      // size="lg"
-                                      className={`
-                                         w-full 
-                                         bg-transparent 
-                                       placeholder:text-blue-gray-400 
-                                       text-blue-gray-700 text-sm 
-                                         border-[0.5px] 
-                                         border-blue-gray-200 
-                                         rounded pl-3 pr-8 py-[11px] 
-                                         transition duration-300 normal-case 
-                                         focus:outline-none 
-                                         ${
-                                           touched &&
-                                           touched.status_id &&
-                                           errors &&
-                                           errors.status_id
-                                             ? "border-red-500 "
-                                             : "border-blue-gray-400"
-                                         }   
-                                         ${
-                                           touched &&
-                                           touched.status_id &&
-                                           errors &&
-                                           errors.status_id
-                                             ? "focus:border-red-500 "
-                                             : "focus:border-blue-gray-400"
-                                         }                                             
-                                        hover:border-blue-gray-400  
-                                          appearance-none cursor-pointer
-                                          `}
-                                      name="status_id"
-                                      value={values.status_id || ""}
-                                      onChange={(e) => {
-                                        setFieldValue("status_id", e.target.value);
-                                      }}
-                                      onBlur={handleBlur}
-                                    >
-                                      <option value="">None</option>
-                                      {staEmpData.map((sta, index) => (
-                                        <option value={sta.id} key={index}>
-                                          {sta.title}
-                                        </option>
-                                      ))}
-                                    </select>
-                   </div>
+                  </div>
+                  <div className="flex flex-col xl:w-full p-1">
+                    <select
+                     className={`
+                     w-full 
+                     bg-transparent 
+                   placeholder:text-blue-gray-400 
+                   text-blue-gray-700 
+                     text-sm 
+                     rounded 
+                     pl-3 
+                     pr-8 
+                     py-[11px] 
+                     transition 
+                     duration-300 
+                     normal-case 
+                     focus:outline-none 
+                     border-[1px]
+                     focus:border-[2px]
+                     ${touched && touched.status_id && errors && errors.status_id ? "!border-red-500 focus:border-red-500" : "border-blue-gray-200 focus:border-blue-gray-900"}                                             
+                    hover:border-blue-gray-400  
+                      appearance-none cursor-pointer
+                      `}
+                      name="status_id"
+                      value={values.status_id || ""}
+                      onChange={(e) => {
+                        setFieldValue("status_id", e.target.value);
+                      }}
+                      onBlur={handleBlur}
+                    >
+                      <option value="">None</option>
+                      {staEmpData.map((sta, index) => (
+                        <option value={sta.id} key={index}>
+                          {sta.title}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
                 <div className="w-full flex justify-end gap-2">
                   <Button

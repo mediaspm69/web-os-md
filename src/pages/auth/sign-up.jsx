@@ -5,9 +5,11 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
+
 import { Form, Formik } from "formik";
 import { Link } from "react-router-dom";
 import * as Yup from "yup";
+
 //data
 import { dpmData } from "@/data";
 //helpers
@@ -17,13 +19,12 @@ import Swal from "sweetalert2";
 import { useContext } from "react";
 import MyContext from "@/context/MyContext";
 
-
 const signUpSchema = Yup.object().shape({
   username: Yup.string()
   .min(5, "ชื่อผู้ใช้ต้องมีความยาวมากกว่า 4 ตัวอักษร")
   .max(50,"ชื่อผู้ใช้ต้องมีความยาวไม่เกิน 50 ตัวอักษร")
   .matches(/[0-9]/, "ชื่อผู้ใช้ต้องมีตัวเลข")
-  .matches(/[a-zA-Z]/, "โปรดระบุชื่อผู้ใช้เป็นภาษาอังกฤษ")
+  .matches(/[a-zA-Z]/, "ชื่อผู้ใช้ต้องมีตัวอักษรภาษาอังกฤษ")
   .required("กรุณาระบุชื่อผู้ใช้"),
   firstname: Yup.string().required("กรุณาระบุชื่อจริง"),
   lastname: Yup.string().required("กรุณาระบุนามสกุล"),
@@ -116,11 +117,16 @@ export function SignUp() {
                 <div className="mb-1 flex flex-col gap-2">
                   <div className="w-full flex flex-col ">
                     <Typography variant="h6" color="blue-gray">
-                      ชื่อผู้ใช้
+                      ชื่อผู้ใช้ (English) <span className="text-red-500">*</span>
                     </Typography>
                     <Input
                       size="lg"
                       placeholder="Supamitr09"
+                      className={`${touched && touched.username && errors && errors.username ? "!border-red-500 focus:border-red-500": "!border-blue-gray-900 focus:border-blue-gray-900"}   
+                      `}
+                       labelProps={{
+                       className: "hidden",
+                      }}
                       name="username"
                       value={values.username}
                       onChange={(e)=> setFieldValue('username',inputLengthEnglish(e.target.value))}
@@ -138,11 +144,16 @@ export function SignUp() {
                   <div className="grid md:grid-cols-2 sm:grid-cols-1 gap-4">
                     <div className="w-full flex flex-col ">
                       <Typography variant="h6" color="blue-gray">
-                        ชื่อจริง
+                        ชื่อจริง <span className="text-red-500">*</span>
                       </Typography>
                       <Input
                         size="lg"
-                        placeholder="มะม่วง"
+                        placeholder="Supamitr..."
+                        className={`${touched && touched.firstname && errors && errors.firstname ? "!border-red-500 focus:border-red-500": "!border-blue-gray-900 focus:border-blue-gray-900"}   
+                        `}
+                       labelProps={{
+                       className: "hidden",
+                       }}
                         name="firstname"
                         value={values.firstname}
                         onChange={handleChange}
@@ -165,11 +176,16 @@ export function SignUp() {
                     </div>
                     <div className="w-full flex flex-col ">
                       <Typography variant="h6" color="blue-gray">
-                        นามสกุล
+                        นามสกุล <span className="text-red-500">*</span>
                       </Typography>
                       <Input
                         size="lg"
-                        placeholder="สุขดี"
+                        placeholder="Hospital..."
+                        className={`${touched && touched.lastname && errors && errors.lastname ? "!border-red-500 focus:border-red-500": "!border-blue-gray-900 focus:border-blue-gray-900"}   
+                        `}
+                        labelProps={{
+                        className: "hidden",
+                        }}                        
                         name="lastname"
                         value={values.lastname}
                         onChange={handleChange}
@@ -194,22 +210,26 @@ export function SignUp() {
 
                   <div className="w-full flex flex-col ">
                     <Typography variant="h6" color="blue-gray">
-                      แผนก
+                      แผนก <span className="text-red-500">*</span>
                     </Typography>
                     <select
-                      // size="lg"
                      className={`
                      w-full 
                      bg-transparent 
                    placeholder:text-blue-gray-400 
-                   text-blue-gray-700 text-sm 
-                     border-[0.5px] 
-                     border-blue-gray-200 
-                     rounded pl-3 pr-8 py-[11px] 
-                     transition duration-300 normal-case 
+                   text-blue-gray-700 
+                     text-sm 
+                     rounded 
+                     pl-3 
+                     pr-8 
+                     py-[11px] 
+                     transition 
+                     duration-300 
+                     normal-case 
                      focus:outline-none 
-                     ${touched && touched.dpm_id && errors && errors.dpm_id ? "border-red-500 " : "border-blue-gray-400"}   
-                     ${touched && touched.dpm_id && errors && errors.dpm_id ? "focus:border-red-500 " : "focus:border-blue-gray-400"}                                             
+                     border-[1px]
+                     focus:border-[2px]
+                     ${touched && touched.dpm_id && errors && errors.dpm_id ? "!border-red-500 focus:border-red-500" : "border-blue-gray-200 focus:border-blue-gray-900"}                                             
                     hover:border-blue-gray-400  
                       appearance-none cursor-pointer
                       `}
@@ -236,12 +256,18 @@ export function SignUp() {
                   </div>
                   <div className="w-full flex flex-col ">
                     <Typography variant="h6" color="blue-gray">
-                      รหัสผ่าน
+                      รหัสผ่าน <span className="text-red-500">*</span>
                     </Typography>
                     <Input
                       type="password"
                       size="lg"
                       placeholder="********"
+                      className={`
+                      ${touched && touched.password && errors && errors.password ? "!border-red-500 focus:border-red-500": "!border-blue-gray-900 focus:border-blue-gray-900"}   
+                      `}
+                       labelProps={{
+                       className: "hidden",
+                      }}
                       name="password"
                       value={values.password}
                       onChange={handleChange}
@@ -261,12 +287,18 @@ export function SignUp() {
                   </div>
                   <div className="w-full flex flex-col ">
                     <Typography variant="h6" color="blue-gray">
-                      ยืนยันรหัสผ่าน
+                      ยืนยันรหัสผ่าน <span className="text-red-500">*</span>
                     </Typography>
                     <Input
                       type="password"
                       size="lg"
                       placeholder="********"
+                      className={`
+                      ${touched && touched.confirm && errors && errors.confirm ? "!border-red-500 focus:border-red-500": "!border-blue-gray-900 focus:border-blue-gray-900"}   
+                    `}
+                    labelProps={{
+                      className: "hidden",
+                    }}
                       name="confirm"
                       value={values.confirm}
                       onChange={handleChange}

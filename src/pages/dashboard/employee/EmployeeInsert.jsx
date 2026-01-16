@@ -239,18 +239,43 @@ export function EmployeeInsert() {
                   </div>
                   <div className="flex flex-col  xl:w-full p-1">
                     <select
-                      className="w-full bg-transparent placeholder:text-blue-gray-400 text-blue-gray-700 text-sm border border-blue-gray-200 rounded pl-3 pr-8 py-3 transition duration-300 normal-case focus:outline-none focus:border-blue-gray-400 hover:border-blue-gray-400 shadow-sm focus:shadow-md appearance-none cursor-pointer"
+                      className={`
+                     w-full 
+                     bg-transparent 
+                   placeholder:text-blue-gray-400 
+                   text-blue-gray-700 
+                     text-sm 
+                     rounded 
+                     pl-3 
+                     pr-8 
+                     py-[11px] 
+                     transition 
+                     duration-300 
+                     normal-case 
+                     focus:outline-none 
+                     border-[1px]
+                     focus:border-[2px]
+                     ${
+                       touched && touched.dpm_id && errors && errors.dpm_id
+                         ? "!border-red-500 focus:border-red-500 text-red-500"
+                         : "border-blue-gray-200 focus:border-blue-gray-900"
+                     }                                             
+                    hover:border-blue-gray-400  
+                      appearance-none cursor-pointer
+                      `}
                       value={values.dpm_id}
                       onChange={(e) => setFieldValue("dpm_id", e.target.value)}
-                      error={Boolean(
-                        touched && touched.dpm_id && errors && errors.dpm_id
-                      )}
                     >
                       <option value="">แผนก</option>
-                      {dpmData.map(({ id, name }) => (
-                        <option value={id}>{name}</option>
+                      {dpmData.map(({ id, name },index) => (
+                        <option value={id} key={index}>{name}</option>
                       ))}
                     </select>
+                    {touched && touched.dpm_id && errors && errors.dpm_id && (
+                      <p className="font-normal text-red-500 text-[12px]">
+                        {errors.dpm_id}
+                      </p>
+                    )}
                   </div>
 
                   <div className="flex flex-col  xl:w-full p-1">
@@ -258,48 +283,42 @@ export function EmployeeInsert() {
                       className="w-full bg-transparent placeholder:text-blue-gray-400 text-blue-gray-700 text-sm border border-blue-gray-200 rounded pl-3 pr-8 py-3 transition duration-300 normal-case focus:outline-none focus:border-blue-gray-400 hover:border-blue-gray-400 shadow-sm focus:shadow-md appearance-none cursor-pointer"
                       value={values.pst_id}
                       onChange={(e) => setFieldValue("pst_id", e.target.value)}
-                      error={Boolean(
-                        touched && touched.pst_id && errors && errors.pst_id
-                      )}
                     >
                       <option value="">ตำแหน่ง</option>
-                      {pstData.map(({ id, name }) => (
-                        <option value={id}>{name}</option>
+                      {pstData.map(({ id, name },index) => (
+                        <option value={id} key={index}>{name}</option>
                       ))}
                     </select>
                   </div>
                   <div className="flex flex-col xl:w-full p-1">
                     <select
-                      // size="lg"
                       className={`
-                                                           w-full 
-                                                           bg-transparent 
-                                                         placeholder:text-blue-gray-400 
-                                                         text-blue-gray-700 text-sm 
-                                                           border-[0.5px] 
-                                                           border-blue-gray-200 
-                                                           rounded pl-3 pr-8 py-[11px] 
-                                                           transition duration-300 normal-case 
-                                                           focus:outline-none 
-                                                           ${
-                                                             touched &&
-                                                             touched.status_id &&
-                                                             errors &&
-                                                             errors.status_id
-                                                               ? "border-red-500 "
-                                                               : "border-blue-gray-400"
-                                                           }   
-                                                           ${
-                                                             touched &&
-                                                             touched.status_id &&
-                                                             errors &&
-                                                             errors.status_id
-                                                               ? "focus:border-red-500 "
-                                                               : "focus:border-blue-gray-400"
-                                                           }                                             
-                                                          hover:border-blue-gray-400  
-                                                            appearance-none cursor-pointer
-                                                            `}
+                     w-full 
+                     bg-transparent 
+                   placeholder:text-blue-gray-400 
+                   text-blue-gray-700 
+                     text-sm 
+                     rounded 
+                     pl-3 
+                     pr-8 
+                     py-[11px] 
+                     transition 
+                     duration-300 
+                     normal-case 
+                     focus:outline-none 
+                     border-[1px]
+                     focus:border-[2px]
+                     ${
+                       touched &&
+                       touched.status_id &&
+                       errors &&
+                       errors.status_id
+                         ? "!border-red-500 focus:border-red-500 text-red-500"
+                         : "border-blue-gray-200 focus:border-blue-gray-900"
+                     }                                             
+                    hover:border-blue-gray-400  
+                      appearance-none cursor-pointer
+                      `}
                       name="status_id"
                       value={values.status_id || ""}
                       onChange={(e) => {
@@ -314,21 +333,56 @@ export function EmployeeInsert() {
                         </option>
                       ))}
                     </select>
+                    {touched &&
+                      touched.status_id &&
+                      errors &&
+                      errors.status_id && (
+                        <p className="font-normal text-red-500 text-[12px]">
+                          {errors.status_id}
+                        </p>
+                      )}
                   </div>
                   <div className="flex flex-col  xl:w-full p-1">
                     <select
-                      className="w-full bg-transparent placeholder:text-blue-gray-400 text-blue-gray-700 text-sm border border-blue-gray-200 rounded pl-3 pr-8 py-3 transition duration-300 normal-case focus:outline-none focus:border-blue-gray-400 hover:border-blue-gray-400 shadow-sm focus:shadow-md appearance-none cursor-pointer"
-                      value={values.role_id}
+                      className={`
+                     w-full 
+                     bg-transparent 
+                   placeholder:text-blue-gray-400 
+                   text-blue-gray-700 
+                     text-sm 
+                     rounded 
+                     pl-3 
+                     pr-8 
+                     py-[11px] 
+                     transition 
+                     duration-300 
+                     normal-case 
+                     focus:outline-none 
+                     border-[1px]
+                     focus:border-[2px]
+                     ${
+                       touched && touched.role_id && errors && errors.role_id
+                         ? "!border-red-500 focus:border-red-500 text-red-500"
+                         : "border-blue-gray-200 focus:border-blue-gray-900"
+                     }                                             
+                    hover:border-blue-gray-400  
+                      appearance-none cursor-pointer 
+                      `}
+                      name="role_id"
+                      value={values.role_id || ""}
                       onChange={(e) => setFieldValue("role_id", e.target.value)}
-                      error={Boolean(
-                        touched && touched.role_id && errors && errors.role_id
-                      )}
-                    >
+                      onBlur={handleBlur}
+                   >
                       <option value="">สิทธิ์การใช้งาน</option>
-                      {roleData.map(({ id, name }) => (
-                        <option value={id}>{name}</option>
+                      {roleData.map(({ id, name },index) => (
+                        <option value={id} key={index}>{name}</option>
                       ))}
                     </select>
+                    {touched && touched.role_id && errors && errors.role_id && (
+                      <p className="font-normal text-red-500 text-[12px]">
+                        {errors.role_id}
+                      </p>
+                    )}
                   </div>
                 </div>
                 <div className="w-full flex justify-end gap-2">
