@@ -26,7 +26,6 @@ import MyContext from "@/context/MyContext";
 //service
 import { InsertJobService } from "@/services/job.service";
 
-
 const jobSchema = Yup.object().shape({
   job_Name: Yup.string().required("กรุณาระบุข้อมูล"),
   job_DateTime: Yup.string().required("กรุณาระบุข้อมูล"),
@@ -729,7 +728,7 @@ export const JobInsert = () => {
                 <div className="w-full">
                   <Input
                     type="file"
-                    label="แนบไฟล์ตัวอย่าง (ขนาดไฟล์สูงสุด 35MB)"
+                    label="แนบไฟล์ตัวอย่าง"
                     onChange={(e) => handleUpload(e.target.files[0])}
                     icon={
                       <InformationCircleIcon

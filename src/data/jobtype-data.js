@@ -41,6 +41,16 @@ export const jobTypeData = [
   },
     {
     id: "J09",
+    name: "บทความ",
+    nameEN: "Article",
+  },
+  {
+    id: "J10",
+    name: "ป้ายแพทย์/เภสัช/เทคนิคฯ",
+    nameEN: "Medical/Pharmacy/Medical Technology",
+  },
+    {
+    id: "J99",
     name: "อืนๆ",
     nameEN: "Others",
   },
