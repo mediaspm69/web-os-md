@@ -10,13 +10,9 @@ import {
   DialogHeader,
   DialogBody,
   DialogFooter,
+  CardFooter,
 } from "@material-tailwind/react";
-import {
-  dpmData,
-  pstData,
-  roleData,
-  staEmpData,
-} from "@/data";
+import { dpmData, pstData, roleData, staEmpData } from "@/data";
 import { useContext, useEffect, useMemo, useState } from "react";
 import {
   DeleteEmployeeService,
@@ -33,7 +29,8 @@ import { useNavigate } from "react-router-dom";
 import MyContext from "@/context/MyContext";
 import Swal from "sweetalert2";
 import { Form, Formik } from "formik";
-import * as Yup from 'yup'
+import * as Yup from "yup";
+import { OSPagination } from "@/components/OSPagination";
 
 const updateStatusSchema = Yup.object().shape({
   id: Yup.string().required("ไม่พบไอดี"),
@@ -44,24 +41,51 @@ const updateStatusSchema = Yup.object().shape({
 export function EmployeeTable() {
   const navigate = useNavigate();
   const { setLoader } = useContext(MyContext);
-  const [employee, setEmployee] = useState([]);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [employee, setEmployee] = useState({
+    page: 1,
+    pageSize: 10,
+    total: 0,
+    totalPages: 1,
+    data: [],
+  });
 
   const [open, setOpen] = useState(false);
-  const [itemEmp, setItemEmp] = useState({ id: "", status_id: "",role_id:"" });
+  const [itemEmp, setItemEmp] = useState({
+    id: "",
+    status_id: "",
+    role_id: "",
+  });
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [page, pageSize]);
 
   const fetchData = async () => {
     setLoader(true);
-    const resp = await GetListEmployeeService();
+    const resp = await GetListEmployeeService(page, pageSize);
     setLoader(false);
     if (resp) {
       setEmployee(resp);
     } else {
-      setEmployee([]);
+      setEmployee({
+        page: 1,
+        pageSize: 10,
+        total: 0,
+        totalPages: 1,
+        data: [],
+      });
     }
+  };
+
+  const onPageChange = async (e) => {
+    const selected = e.selected;
+    setPage(selected + 1);
+  };
+
+  const handleChangePageSize = async (number) => {
+    setPageSize(number);
   };
 
   const convertDriveImage = (url) => {
@@ -74,15 +98,15 @@ export function EmployeeTable() {
     return ""; // or handle invalid format
   };
 
-  const handleOpen = (id, status_id,role_id) => {
+  const handleOpen = (id, status_id, role_id) => {
     setOpen(true);
-    setItemEmp({ id, status_id,role_id });
+    setItemEmp({ id, status_id, role_id });
   };
 
   const handleClose = () => {
-    setOpen(false)
-    setItemEmp({id:"", status_id:"" ,role_id:""})
-  }
+    setOpen(false);
+    setItemEmp({ id: "", status_id: "", role_id: "" });
+  };
 
   const departmentData = (id) => {
     if (id) {
@@ -155,9 +179,9 @@ export function EmployeeTable() {
   };
 
   const onSubmitUpdateStatus = async (val) => {
-    handleClose()
+    handleClose();
     setLoader(true);
-    
+
     const resp = await UpdateEmployeeStatusService(val);
     setLoader(false);
     if (resp && resp.success) {
@@ -220,34 +244,36 @@ export function EmployeeTable() {
               </tr>
             </thead>
             <tbody>
-              {employee.map(
-                (
-                  {
-                    id,
-                    code,
-                    username,
-                    firstname,
-                    lastname,
-                    phone,
-                    email,
-                    picture,
-                    role_id,
-                    dpm_id,
-                    pst_id,
-                    status_id,
-                  },
-                  key
-                ) => {
-                  const className = `py-3 px-5 ${
-                    key === employee.length - 1
-                      ? ""
-                      : "border-b border-blue-gray-50"
-                  }`;
-                  return (
-                    <tr key={key}>
-                      <td className={className}>
-                        <div className="flex items-center gap-4">
-                          {/* {picture ? (
+              {employee.data &&
+                employee.data.length > 0 &&
+                employee.data.map(
+                  (
+                    {
+                      id,
+                      code,
+                      username,
+                      firstname,
+                      lastname,
+                      phone,
+                      email,
+                      picture,
+                      role_id,
+                      dpm_id,
+                      pst_id,
+                      status_id,
+                    },
+                    key
+                  ) => {
+                    const className = `py-3 px-5 ${
+                      key === employee.length - 1
+                        ? ""
+                        : "border-b border-blue-gray-50"
+                    }`;
+                    return (
+                      <tr key={key}>
+                        <td className={className}>
+                          <div className="flex items-center gap-4">
+                            {/* {picture ? (
                             <Avatar
                               src={convertDriveImage(picture)}
                               alt={username}
@@ -262,71 +288,81 @@ export function EmployeeTable() {
                               variant="rounded"
                             />
                           )} */}
-                          <Avatar
-                            src={"/img/logo/logo_spm_facebook.jpg"}
-                            alt={username}
-                            size="sm"
-                            variant="rounded"
-                          />
-                          <div>
-                            <Typography                   
-                              color="blue-gray"
-                              className="font-semibold text-[14px] w-[100px]"
-                            >
-                              {username}
-                            </Typography>
-                            <Typography className="text-[14px] font-normal text-blue-gray-500 w-[100px]">
-                              {email}
-                            </Typography>
+                            <Avatar
+                              src={"/img/logo/logo_spm_facebook.jpg"}
+                              alt={username}
+                              size="sm"
+                              variant="rounded"
+                            />
+                            <div>
+                              <Typography
+                                color="blue-gray"
+                                className="font-semibold text-[14px] w-[100px]"
+                              >
+                                {username}
+                              </Typography>
+                              <Typography className="text-[14px] font-normal text-blue-gray-500 w-[100px]">
+                                {email}
+                              </Typography>
+                            </div>
                           </div>
-                        </div>
-                      </td>
-                      <td className={className}>
-                        <Typography className="text-[14px] font-normal text-blue-gray-600 w-[150px]">
-                          {`${firstname} ${lastname}`}
-                        </Typography>
-                      </td>
-                      <td className={className}>
-                        <Typography className="text-[14px] font-normal text-blue-gray-600 w-[150px]">
-                          {departmentData(dpm_id)}
-                        </Typography>
-                      </td>
-                      <td className={className}>
-                        <Typography className="text-[14px] font-normal text-blue-gray-600 w-[100px]">
-                          {rolData(role_id)}
-                        </Typography>
-                      </td>
-                      <td className={className}>
-                        <IconButton
-                          color="white"
-                          onClick={() => handleOpen(id, status_id,role_id)}
-                        >
-                          {statusData(status_id)}
-                        </IconButton>
-                      </td>
-                      <td className={className}>
-                        <div className="flex gap-2">
+                        </td>
+                        <td className={className}>
+                          <Typography className="text-[14px] font-normal text-blue-gray-600 w-[150px]">
+                            {`${firstname} ${lastname}`}
+                          </Typography>
+                        </td>
+                        <td className={className}>
+                          <Typography className="text-[14px] font-normal text-blue-gray-600 w-[150px]">
+                            {departmentData(dpm_id)}
+                          </Typography>
+                        </td>
+                        <td className={className}>
+                          <Typography className="text-[14px] font-normal text-blue-gray-600 w-[100px]">
+                            {rolData(role_id)}
+                          </Typography>
+                        </td>
+                        <td className={className}>
                           <IconButton
-                            className="bg-yellow-700"
-                            onClick={() => navigate("update", { state: id })}
+                            color="white"
+                            onClick={() => handleOpen(id, status_id, role_id)}
                           >
-                            <PencilIcon className="w-5 text-white" />
+                            {statusData(status_id)}
                           </IconButton>
-                          <IconButton
-                            onClick={async () => await deleteEmployee(id)}
-                            className="bg-red-700"
-                          >
-                            <TrashIcon className="w-5 text-white" />
-                          </IconButton>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                }
-              )}
+                        </td>
+                        <td className={className}>
+                          <div className="flex gap-2">
+                            <IconButton
+                              className="bg-yellow-700"
+                              onClick={() => navigate("update", { state: id })}
+                            >
+                              <PencilIcon className="w-5 text-white" />
+                            </IconButton>
+                            <IconButton
+                              onClick={async () => await deleteEmployee(id)}
+                              className="bg-red-700"
+                            >
+                              <TrashIcon className="w-5 text-white" />
+                            </IconButton>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  }
+                )}
             </tbody>
           </table>
         </CardBody>
+        <CardFooter>
+          <OSPagination
+            total={employee.total}
+            pageCount={employee.totalPages}
+            page={page}
+            pageSize={pageSize}
+            onPageChange={onPageChange}
+            handleChangePageSize={handleChangePageSize}
+          />
+        </CardFooter>
       </Card>
       <Dialog
         open={open}

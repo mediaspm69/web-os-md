@@ -1,13 +1,13 @@
 import axios from "axios";
 import { employeeService } from "../helpers/contents";
 
-export const GetListEmployeeService = async () => {
+export const GetListEmployeeService = async (page,pageSize) => {
   try {
-    const body = JSON.stringify({ action: "getlist" });
+    const body = JSON.stringify({ action: "getlist",page,pageSize });
     const resp = await axios.post(employeeService.EMPLOYEE_URL, body);
     let json = await resp.data;
     if (json && json.success) {
-      return json.data;
+      return json;
     }
     return null;
   } catch (error) {

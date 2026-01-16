@@ -7,13 +7,7 @@ export const GetListJobService = async (page,pageSize,department_Id,role_Id) => 
     const resp = await axios.post(jobService.JOB_URL, body);
     let json = await resp.data;
     if (json && json.success) {
-      return {
-        page: json.page,
-        pageSize: json.pageSize,
-        total: json.total,
-        totalPages: json.totalPages,
-        data: json.data,
-      };
+      return json
     }
     return null;
   } catch (error) {

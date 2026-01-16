@@ -47,24 +47,25 @@ export function OSPagination({
           </IconButton>
         )}
         onPageChange={onPageChange}
+        
         pageCount={pageCount}
         nextLabel={
-          <Button
+          <Typography
             //disabled={Boolean(page === 1)}
-              variant="outlined"
+              
             className="flex items-center gap-1 rounded-full"
           >
            ถัดไป
-          </Button>
+          </Typography>
         }
         previousLabel={
-          <Button
+          <Typography
             //disabled={Boolean(page === pageCount)}
-            variant="outlined"
+          
             className="flex items-center gap-1 rounded-full"
           >
            ย้อนกลับ
-          </Button>
+          </Typography>
         }
         renderOnZeroPageCount={null}
       />

@@ -14,6 +14,7 @@ import { format } from "date-fns";
 import { DialogUploadFile } from "./sections/DialogUploadFIle";
 import jobTypeData from "@/data/jobtype-data";
 import { DayPicker } from "react-day-picker";
+import { dpmData } from "@/data";
 
 const jobSchema = Yup.object().shape({
   job_Name: Yup.string().required("กรุณาระบุข้อมูล"),
@@ -29,6 +30,7 @@ const jobSchema = Yup.object().shape({
   employee_Id: Yup.string().required("กรุณาระบุข้อมูล"),
   employee_FirstName: Yup.string().required("กรุณาระบุข้อมูล"),
   department_Id: Yup.string().required("กรุณาระบุข้อมูล"),
+  empDpt_Id: Yup.string().required("กรุณาระบุข้อมูล"),
 });
 
 export function JobUpdate() {
@@ -103,9 +105,10 @@ export function JobUpdate() {
           jobStatus_Id: job ? job.jobStatus_Id ?? "" : "",
           recipient_Id: job ? job.recipient_Id ?? "" : "",
           reviewer_Name: job ? job.reviewer_Name ?? "" : "",
+          empDpt_Id: dataEmp ? dataEmp.dpm_id ?? "": "",
           employee_Id: job ? job.employee_Id ?? "" : "",
           employee_FirstName: job ? job.employee_FirstName ?? "" : "",
-          department_Id: job ? job.department_Id ?? "" : "",
+          department_Id: "D002",
           position_Id: job ? job.position_Id ?? "" : "",
           fileShow: "",
           fileBase64: "",
@@ -224,47 +227,127 @@ export function JobUpdate() {
                       </p>
                     )}
                 </div>
-                <div className="w-full">
+                  <div className="w-full">
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="mb-2 font-medium"
+                    >
+                      ประเภทงาน <span className="text-red-500">*</span>
+                    </Typography>
+                    <select
+                      className={`
+                     w-full 
+                     bg-transparent 
+                   placeholder:text-blue-gray-400 
+                   text-blue-gray-700 
+                     text-sm 
+                     rounded 
+                     pl-3 
+                     pr-8 
+                     py-[11px] 
+                     transition 
+                     duration-300 
+                     normal-case 
+                     focus:outline-none 
+                     border-[1px]
+                     focus:border-[2px]
+                     ${touched && touched.jobType_Id && errors && errors.jobType_Id ? "!border-red-500 focus:border-red-500": "border-blue-gray-200 focus:border-blue-gray-900"}                                             
+                    hover:border-blue-gray-400  
+                      appearance-none cursor-pointer
+                      `}
+                      name="jobType_Id"
+                      value={values.jobType_Id || ""}
+                      onChange={(e) =>
+                        setFieldValue("jobType_Id", e.target.value)
+                      }
+                      onBlur={handleBlur}
+                    >
+                      <option value="">ประเภทงาน</option>
+                      {jobTypeData.map(({ id, name, nameEN }, index) => (
+                        <option key={index} value={id}>
+                          {`${name} (${nameEN})`}
+                        </option>
+                      ))}
+                    </select>
+
+                    {touched &&
+                      touched.jobType_Id &&
+                      errors &&
+                      errors.jobType_Id && (
+                        <p className="font-normal text-red-500 text-[12px]">
+                          {errors.jobType_Id}
+                        </p>
+                      )}
+                  </div>
+                </div>
+                <Typography
+                  variant="small"
+                  color="blue-gray"
+                  className="mb-2 text-[18px] font-bold flex items-center"
+                >
+                  รายละเอียดงาน (Job Detail)
+                </Typography>
+                <div className="w-full mb-2">
                   <Typography
                     variant="small"
                     color="blue-gray"
                     className="mb-2 font-medium"
                   >
-                    ประเภทงาน <span className="text-red-500">*</span>
+                    สั่งงานแผนก <span className="text-red-500">*</span>
                   </Typography>
                   <select
-                    className="w-full bg-transparent placeholder:text-blue-gray-400 text-blue-gray-700 text-sm border-[0.5px] border-blue-gray-200 rounded pl-3 pr-8 py-[11px] transition duration-300 normal-case focus:outline-none focus:border-blue-gray-400 hover:border-blue-gray-400 shadow-sm focus:shadow-md appearance-none cursor-pointer"
-                    name="jobType_Id"
-                    value={values.jobType_Id}
-                    onChange={(e) =>
-                      setFieldValue("jobType_Id", e.target.value)
-                    }
+                    disabled
+                    className={`
+                     w-full 
+                     bg-transparent 
+                   placeholder:text-blue-gray-400 
+                   text-blue-gray-700 
+                     text-sm 
+                     rounded 
+                     pl-3 
+                     pr-8 
+                     py-[11px] 
+                     transition 
+                     duration-300 
+                     normal-case 
+                     focus:outline-none 
+                     border-[1px]
+                     focus:border-[2px]
+                     ${
+                       touched &&
+                       touched.department_Id &&
+                       errors &&
+                       errors.department_Id
+                         ? "!border-red-500 focus:border-red-500"
+                         : "border-blue-gray-200 focus:border-blue-gray-900"
+                     }                                             
+                    hover:border-blue-gray-400  
+                      appearance-none cursor-pointer
+                      `}
+                    name="department_Id"
+                    value={values.department_Id || ""}
+                    onChange={(e) => {
+                      setFieldValue("department_Id", e.target.value);
+                    }}
+                    onBlur={handleBlur}
                   >
-                    <option value="">ประเภทงาน</option>
-                    {jobTypeData.map(({ id, name,nameEN }, index) => (
-                      <option key={index} value={id}>
-                        {`${name} (${nameEN})`}
+                    <option value="">None</option>
+                    {dpmData.map((dpm, index) => (
+                      <option value={dpm.id} key={index}>
+                        {dpm.name}
                       </option>
                     ))}
                   </select>
-
                   {touched &&
-                    touched.jobType_Id &&
+                    touched.department_Id &&
                     errors &&
-                    errors.jobType_Id && (
+                    errors.department_Id && (
                       <p className="font-normal text-red-500 text-[12px]">
-                        {errors.jobType_Id}
+                        {errors.department_Id}
                       </p>
                     )}
                 </div>
-              </div>
-              <Typography
-                variant="small"
-                color="blue-gray"
-                className="mb-2 text-[18px] font-bold flex items-center"
-              >
-                รายละเอียดงาน (Job Detail)
-              </Typography>
               <div className="mb-6 flex flex-col  gap-4 md:flex-row">
                 <div className="w-full">
                   <Typography

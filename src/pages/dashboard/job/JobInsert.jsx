@@ -25,6 +25,7 @@ import { DialogUploadFile } from "./sections/DialogUploadFIle";
 import MyContext from "@/context/MyContext";
 //service
 import { InsertJobService } from "@/services/job.service";
+import { dpmData } from "@/data";
 
 const jobSchema = Yup.object().shape({
   job_Name: Yup.string().required("กรุณาระบุข้อมูล"),
@@ -40,6 +41,7 @@ const jobSchema = Yup.object().shape({
   employee_Id: Yup.string().required("กรุณาระบุข้อมูล"),
   employee_FirstName: Yup.string().required("กรุณาระบุข้อมูล"),
   department_Id: Yup.string().required("กรุณาระบุข้อมูล"),
+  empDpt_Id: Yup.string().required("กรุณาระบุข้อมูล"),
 });
 
 export const JobInsert = () => {
@@ -61,7 +63,6 @@ export const JobInsert = () => {
       navigate(-1);
     }
   };
-
 
   return (
     <Card shadow={true} className="px-8 py-20 mt-2 container mx-auto">
@@ -90,9 +91,10 @@ export const JobInsert = () => {
           jobStatus_Id: "S01",
           recipient_Id: "",
           reviewer_Name: "",
+          empDpt_Id: dataEmp ? dataEmp.dpm_id ?? "" : "",
           employee_Id: dataEmp ? dataEmp.id : "",
           employee_FirstName: dataEmp ? dataEmp.firstname : "",
-          department_Id: dataEmp ? dataEmp.dpm_id ?? "" : "",
+          department_Id: "D002",
           position_Id: dataEmp ? dataEmp.position_Id ?? "" : "",
           fileShow: "",
           fileBase64: "",
@@ -141,9 +143,7 @@ export const JobInsert = () => {
                       color="blue-gray"
                       className="w-full bg-[#FFFFFF]rounded-md p-2 placeholder:opacity-100 border-[0.5px] focus:border-[0.5px] focus:border-t-gray-900 border-t-gray-300"
                     >
-                      {`ชื่อผู้แจ้ง: ${
-                        dataEmp.firstname || ""
-                      }`}
+                      {`ชื่อผู้แจ้ง: ${dataEmp.firstname || ""}`}
                     </Typography>
                   )}
                 </div>
@@ -219,17 +219,44 @@ export const JobInsert = () => {
                       ประเภทงาน <span className="text-red-500">*</span>
                     </Typography>
                     <select
-                      className="w-full bg-transparent placeholder:text-blue-gray-400 text-blue-gray-700 text-sm border-[0.5px] border-blue-gray-200 rounded pl-3 pr-8 py-[11px] transition duration-300 normal-case focus:outline-none focus:border-blue-gray-400 hover:border-blue-gray-400 shadow-sm focus:shadow-md appearance-none cursor-pointer"
+                      className={`
+                     w-full 
+                     bg-transparent 
+                   placeholder:text-blue-gray-400 
+                   text-blue-gray-700 
+                     text-sm 
+                     rounded 
+                     pl-3 
+                     pr-8 
+                     py-[11px] 
+                     transition 
+                     duration-300 
+                     normal-case 
+                     focus:outline-none 
+                     border-[1px]
+                     focus:border-[2px]
+                     ${
+                       touched &&
+                       touched.jobType_Id &&
+                       errors &&
+                       errors.jobType_Id
+                         ? "!border-red-500 focus:border-red-500"
+                         : "border-blue-gray-200 focus:border-blue-gray-900"
+                     }                                             
+                    hover:border-blue-gray-400  
+                      appearance-none cursor-pointer
+                      `}
                       name="jobType_Id"
-                      value={values.jobType_Id}
+                      value={values.jobType_Id || ""}
                       onChange={(e) =>
                         setFieldValue("jobType_Id", e.target.value)
                       }
+                      onBlur={handleBlur}
                     >
                       <option value="">ประเภทงาน</option>
-                      {jobTypeData.map(({ id, name,nameEN }, index) => (
+                      {jobTypeData.map(({ id, name, nameEN }, index) => (
                         <option key={index} value={id}>
-                              {`${name} (${nameEN})`}
+                          {`${name} (${nameEN})`}
                         </option>
                       ))}
                     </select>
@@ -251,6 +278,66 @@ export const JobInsert = () => {
                 >
                   รายละเอียดงาน (Job Detail)
                 </Typography>
+                <div className="w-full mb-2">
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="mb-2 font-medium"
+                  >
+                    สั่งงานแผนก <span className="text-red-500">*</span>
+                  </Typography>
+                  <select
+                    disabled
+                    className={`
+                     w-full 
+                     bg-transparent 
+                   placeholder:text-blue-gray-400 
+                   text-blue-gray-700 
+                     text-sm 
+                     rounded 
+                     pl-3 
+                     pr-8 
+                     py-[11px] 
+                     transition 
+                     duration-300 
+                     normal-case 
+                     focus:outline-none 
+                     border-[1px]
+                     focus:border-[2px]
+                     ${
+                       touched &&
+                       touched.department_Id &&
+                       errors &&
+                       errors.department_Id
+                         ? "!border-red-500 focus:border-red-500"
+                         : "border-blue-gray-200 focus:border-blue-gray-900"
+                     }                                             
+                    hover:border-blue-gray-400  
+                      appearance-none cursor-pointer
+                      `}
+                    name="department_Id"
+                    value={values.department_Id || ""}
+                    onChange={(e) => {
+                      setFieldValue("department_Id", e.target.value);
+                    }}
+                    onBlur={handleBlur}
+                  >
+                    <option value="">None</option>
+                    {dpmData.map((dpm, index) => (
+                      <option value={dpm.id} key={index}>
+                        {dpm.name}
+                      </option>
+                    ))}
+                  </select>
+                  {touched &&
+                    touched.department_Id &&
+                    errors &&
+                    errors.department_Id && (
+                      <p className="font-normal text-red-500 text-[12px]">
+                        {errors.department_Id}
+                      </p>
+                    )}
+                </div>
                 <div className="mb-6 flex flex-col  gap-4 md:flex-row">
                   <div className="w-full">
                     <Typography
@@ -733,7 +820,7 @@ export const JobInsert = () => {
                     icon={
                       <InformationCircleIcon
                         onClick={() => {
-                          if (values.fileShow ) {
+                          if (values.fileShow) {
                             setFieldValue("open", true);
                           }
                         }}

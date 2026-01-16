@@ -10,6 +10,7 @@ import {
   DialogFooter,
   Textarea,
   Chip,
+  CardFooter,
 } from "@material-tailwind/react";
 import {
   DeleteJobService,
@@ -23,6 +24,7 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ArrowPathIcon,
+  InformationCircleIcon,
   LightBulbIcon,
   LinkIcon,
   TrashIcon,
@@ -70,7 +72,7 @@ export function JobTable() {
   useEffect(() => {
     const intervalId = setInterval(fetchRealTimeData, 10000); // Fetch every 10 seconds
     return () => clearInterval(intervalId);
-  }, []);
+  }, [page, pageSize, dataEmp]);
 
   const fetchData = async () => {
     setLoader(true);
@@ -129,7 +131,8 @@ export function JobTable() {
     setOpen(false);
   };
 
-  const onPageChange = async ({ selected }) => {
+  const onPageChange = async (e) => {
+    const selected = e.selected;
     setPage(selected + 1);
   };
 
@@ -144,6 +147,16 @@ export function JobTable() {
         return (
           <Chip value={item.name} color={item.color} className="w-fit h-fit" />
         );
+      }
+    }
+    return "";
+  };
+
+  const departmentData = (id) => {
+    if (id) {
+      const dpmName = dpmData.find((fd) => fd?.id === id)?.name;
+      if (dpmName) {
+        return dpmName;
       }
     }
     return "";
@@ -321,13 +334,9 @@ export function JobTable() {
                                   iJob.employee_FirstName || ""
                                 } ผู้ตรวจสอบ: ${iJob.reviewer_Name || ""}`}
                               </Typography>
-                              {iJob.department_Id && (
+                              {iJob.empDpt_Id && (
                                 <Typography variant="h6" color="gray">
-                                  {`แผนก: ${
-                                    dpmData.find(
-                                      (fd) => fd.id === iJob.department_Id
-                                    )?.name || ""
-                                  } `}
+                                  {`แผนก: ${departmentData(iJob.empDpt_Id)} `}
                                 </Typography>
                               )}
                               <Typography variant="h6" color="gray">
@@ -340,6 +349,13 @@ export function JobTable() {
                               <Chip
                                 color="green"
                                 value={iJob.recipient_Name}
+                                className="w-fit h-fit"
+                              />
+                            )}
+                            {iJob.department_Id && (
+                              <Chip
+                                color="green"
+                                value={departmentData(iJob.department_Id)}
                                 className="w-fit h-fit"
                               />
                             )}
@@ -360,16 +376,6 @@ export function JobTable() {
                         </CardBody>
                       </Card>
                     ))}
-                    <div>
-                      <OSPagination
-                        total={jobs.total}
-                        pageCount={jobs.totalPages}
-                        page={page}
-                        pageSize={pageSize}
-                        onPageChange={onPageChange}
-                        handleChangePageSize={handleChangePageSize}
-                      />
-                    </div>
                   </>
                 ) : (
                   <></>
@@ -409,103 +415,114 @@ export function JobTable() {
                 <tbody>
                   {jobs.data &&
                     jobs.data.length > 0 &&
-                    jobs.data.map(
-                      (
-                        {
-                          job_Id,
-                          job_Code,
-                          job_Name,
-                          employee_FirstName,
-                          reviewer_Name,
-                          job_CreationDate,
-                          jobStatus_Id,
-                          isShow,
-                        },
-                        index
-                      ) => {
-                        const className = `py-3 px-5 ${
-                          index === jobs.data.length - 1
-                            ? ""
-                            : "border-b border-blue-gray-50"
-                        }`;
+                    jobs.data.map((item, index) => {
+                      const className = `py-3 px-5 ${
+                        index === jobs.data.length - 1
+                          ? ""
+                          : "border-b border-blue-gray-50"
+                      }`;
+                      const {
+                        job_Id,
+                        job_Code,
+                        job_Name,
+                        employee_FirstName,
+                        reviewer_Name,
+                        job_CreationDate,
+                        jobStatus_Id,
+                        isShow,
+                      } = item;
+                      return (
+                        <tr key={index}>
+                          <td className={className}>
+                            <div className="flex items-center gap-4">
+                              {/* <Avatar src={img} alt={name} size="sm" /> */}
+                              <Typography
+                                color="blue-gray"
+                                className="font-bold text-[14px]"
+                              >
+                                {job_Code || ""}
+                              </Typography>
+                            </div>
+                          </td>
+                          <td className={className}>
+                            <Typography
+                              variant="small"
+                              className="font-medium text-[14px] text-blue-gray-600 w-[200px]"
+                            >
+                              {job_Name || ""}
+                            </Typography>
+                          </td>
+                          <td className={className}>
+                            <Typography
+                              variant="small"
+                              className="font-medium text-[14px] text-blue-gray-600 w-[100px]"
+                            >
+                              {employee_FirstName || ""}
+                            </Typography>
+                          </td>
+                          <td className={className}>
+                            <Typography
+                              variant="small"
+                              className="font-medium text-[14px] text-blue-gray-600 w-[100px]"
+                            >
+                              {reviewer_Name || ""}
+                            </Typography>
+                          </td>
 
-                        return (
-                          <tr key={index}>
-                            <td className={className}>
-                              <div className="flex items-center gap-4">
-                                {/* <Avatar src={img} alt={name} size="sm" /> */}
-                                <Typography
-                                  color="blue-gray"
-                                  className="font-bold text-[14px]"
-                                >
-                                  {job_Code || ""}
-                                </Typography>
-                              </div>
-                            </td>
-                            <td className={className}>
-                              <Typography
-                                variant="small"
-                                className="font-medium text-[14px] text-blue-gray-600 w-[200px]"
+                          <td className={className}>
+                            <Typography
+                              variant="small"
+                              className="font-medium text-[14px] text-blue-gray-600 w-[200px]"
+                            >
+                              {toThaiDateTimeString(job_CreationDate)}
+                            </Typography>
+                          </td>
+                          <td className={className}>
+                            <div className="flex justify-start items-center">
+                              {jobStatus_Id && jobStatusData(jobStatus_Id)}
+                            </div>
+                          </td>
+                          <td className={className}>
+                            <div className="flex gap-2">
+                              <IconButton
+                                className="bg-white"
+                                onClick={async () =>
+                                  await removeIsShow(job_Id, isShow)
+                                }
                               >
-                                {job_Name || ""}
-                              </Typography>
-                            </td>
-                            <td className={className}>
-                              <Typography
-                                variant="small"
-                                className="font-medium text-[14px] text-blue-gray-600 w-[100px]"
+                                {handleJobIsShowData(isShow)}
+                              </IconButton>
+                              <IconButton
+                                onClick={async () => await handleOpen(item)}
+                                className="bg-blue-400"
                               >
-                                {employee_FirstName || ""}
-                              </Typography>
-                            </td>
-                            <td className={className}>
-                              <Typography
-                                variant="small"
-                                className="font-medium text-[14px] text-blue-gray-600 w-[100px]"
+                                <InformationCircleIcon className="w-5 text-white" />
+                              </IconButton>
+                              <IconButton
+                                onClick={async () => await deleteJob(job_Id)}
+                                className="bg-red-700"
                               >
-                                {reviewer_Name || ""}
-                              </Typography>
-                            </td>
-
-                            <td className={className}>
-                              <Typography
-                                variant="small"
-                                className="font-medium text-[14px] text-blue-gray-600 w-[200px]"
-                              >
-                                {toThaiDateTimeString(job_CreationDate)}
-                              </Typography>
-                            </td>
-                            <td className={className}>
-                              <div className="flex justify-start items-center">
-                                {jobStatus_Id && jobStatusData(jobStatus_Id)}
-                              </div>
-                            </td>
-                            <td className={className}>
-                              <div className="flex gap-2">
-                                <IconButton
-                                  className="bg-white"
-                                  onClick={async () =>
-                                    await removeIsShow(job_Id, isShow)
-                                  }
-                                >
-                                  {handleJobIsShowData(isShow)}
-                                </IconButton>
-                                <IconButton
-                                  onClick={async () => await deleteJob(job_Id)}
-                                  className="bg-red-700"
-                                >
-                                  <TrashIcon className="w-5 text-white" />
-                                </IconButton>
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      }
-                    )}
+                                <TrashIcon className="w-5 text-white" />
+                              </IconButton>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
                 </tbody>
               </table>
             </PrivateRouteList>
           </CardBody>
+          <CardFooter>
+            <OSPagination
+              total={jobs.total}
+              pageCount={jobs.totalPages}
+              page={page}
+              pageSize={pageSize}
+              onPageChange={onPageChange}
+              handleChangePageSize={handleChangePageSize}
+            />
+          </CardFooter>
         </Card>
       </div>
       <Dialog open={open} handler={handleClose} size="xl">
@@ -678,25 +695,30 @@ export function JobTable() {
                     <div className="py-4 flex flex-col justify-between">
                       <JobHsitoryTimeline itemHistory={jobHistory} />
                       <PrivateRouteList
-                        role={values.jobStatus_Id}
-                        roles={["S01", "S02"]}
+                        role={dataEmp && dataEmp.id}
+                        roles={[values.employee_Id, values.recipient_Id]}
                       >
-                        <div className="w-full max-h-[20vh] pt-4">
-                          <Typography className="text-[16px] font-normal text-blue-gray-700">
-                            ข้อความ
-                          </Typography>
-                          <Textarea
-                            className="rounded-md focus:border-[0.5px] appearance-none  !border-t-blue-gray-200 placeholder:text-blue-gray-300 placeholder:opacity-100 focus:!border-t-gray-900 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                            labelProps={{
-                              className:
-                                "before:content-none after:content-none",
-                            }}
-                            name="history"
-                            value={values.history}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                          />
-                        </div>
+                        <PrivateRouteList
+                          role={values.jobStatus_Id}
+                          roles={["S01", "S02"]}
+                        >
+                          <div className="w-full max-h-[20vh] pt-4">
+                            <Typography className="text-[16px] font-normal text-blue-gray-700">
+                              ข้อความ
+                            </Typography>
+                            <Textarea
+                              className="rounded-md focus:border-[0.5px] appearance-none  !border-t-blue-gray-200 placeholder:text-blue-gray-300 placeholder:opacity-100 focus:!border-t-gray-900 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                              labelProps={{
+                                className:
+                                  "before:content-none after:content-none",
+                              }}
+                              name="history"
+                              value={values.history}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                            />
+                          </div>
+                        </PrivateRouteList>
                       </PrivateRouteList>
                     </div>
                   </div>
@@ -704,7 +726,7 @@ export function JobTable() {
               </DialogBody>
 
               <DialogFooter className="flex flex-row justify-between items-center gap-2">
-                <div>
+                <div className="flex flex-col gap-2">
                   {values.recipient_Name && (
                     <Chip
                       color="green"
@@ -712,13 +734,20 @@ export function JobTable() {
                       className="w-fit h-fit"
                     />
                   )}
+                  {values.department_Id && (
+                    <Chip
+                      color="green"
+                      value={departmentData(values.department_Id)}
+                      className="w-fit h-fit"
+                    />
+                  )}
                 </div>
 
                 <div className="flex flex-row gap-2">
                   {values.jobStatus_Id === "S01" ? (
-                    <PrivateRouteList
-                      role={dataEmp && dataEmp.role_id}
-                      roles={["R01"]}
+                    <PrivateRoute
+                      rolePrimary={dataEmp && dataEmp.role_id}
+                      rolesTrial={"R01"}
                     >
                       {jobStaManager
                         .filter((ft) => ft.status_id === values.jobStatus_Id)
@@ -742,7 +771,7 @@ export function JobTable() {
                             <span>{item.name}</span>
                           </Button>
                         ))}
-                    </PrivateRouteList>
+                    </PrivateRoute>
                   ) : (
                     <PrivateRoute
                       rolePrimary={(dataEmp && dataEmp.id) || ""}
