@@ -6,6 +6,12 @@ import { Input, Button, Typography } from "@material-tailwind/react";
 import { Form, Formik } from "formik";
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
+import * as Yup from "yup";
+
+const signInSchema = Yup.object().shape({
+  username: Yup.string().required("กรุณาระบุชื่อผู้ใช้"),
+  password: Yup.string().required("กรุณาระบุรหัสผ่าน")
+});
 
 export function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
@@ -48,6 +54,7 @@ export function SignIn() {
             username: "",
             password: "",
           }}
+          validationSchema={signInSchema}
           onSubmit={onSubmitLogin}
         >
           {({
@@ -63,52 +70,83 @@ export function SignIn() {
               className="mt-8 mb-2 mx-auto w-80 max-w-screen-lg lg:w-1/2"
             >
               <div className="mb-1 flex flex-col gap-6">
-                <Typography
-                  variant="small"
-                  color="blue-gray"
-                  className="-mb-3 font-medium"
-                >
-                  ชื่อผู้ใช้
-                </Typography>
-                <Input
-                  size="lg"
-                  placeholder="supamitr..."
-                  className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                  labelProps={{
-                    className: "before:content-none after:content-none",
-                  }}
-                  name="username"
-                  value={values.username}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
-                <Typography
-                  variant="small"
-                  color="blue-gray"
-                  className="-mb-3 font-medium"
-                >
-                  รหัสผ่าน
-                </Typography>
-                <Input
-                  type={showPassword ? "text" : "password"}
-                  size="lg"
-                  placeholder="********"
-                  className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                  labelProps={{
-                    className: "before:content-none after:content-none",
-                  }}
-                  icon={
-                    showPassword ? (
-                      <EyeIcon onClick={() => setShowPassword(false)} />
-                    ) : (
-                      <EyeSlashIcon onClick={() => setShowPassword(true)} />
-                    )
-                  }
-                  name="password"
-                  value={values.password}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
+                <div className="flex flex-col">
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-medium"
+                  >
+                    ชื่อผู้ใช้
+                  </Typography>
+                  <Input
+                    size="lg"
+                    placeholder="supamitr..."
+                    className={`
+                      ${touched && touched.username && errors && errors.username ? "!border-red-500": "border-blue-gray-900"}   
+                      ${touched && touched.username && errors && errors.username ? "focus:border-red-500": "focus:border-blue-gray-900"}  
+                    `}
+                    labelProps={{
+                      className: "before:content-none after:content-none",
+                    }}
+                    name="username"
+                    value={values.username}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  />
+                  {touched && touched.username && errors && errors.username && (
+                    <p className="font-normal text-red-500 text-[12px]">
+                      {errors.username}
+                    </p>
+                  )}
+                </div>
+                <div className="flex flex-col">
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-medium"
+                  >
+                    รหัสผ่าน
+                  </Typography>
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    size="lg"
+                    placeholder="********"
+                    className={` 
+                      ${
+                        touched && touched.dpm_id && errors && errors.dpm_id
+                          ? "!border-red-500"
+                          : "border-blue-gray-900"
+                      }   
+                      ${
+                        touched && touched.dpm_id && errors && errors.dpm_id
+                          ? "focus:border-red-500"
+                          : "focus:border-blue-gray-900"
+                      }  
+                    `}
+                    labelProps={{
+                      className: "before:content-none after:content-none",
+                    }}
+                    icon={
+                      showPassword ? (
+                        <EyeIcon onClick={() => setShowPassword(false)} />
+                      ) : (
+                        <EyeSlashIcon onClick={() => setShowPassword(true)} />
+                      )
+                    }
+                    name="password"
+                    value={values.password}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={Boolean(
+                      touched && touched.password && errors && errors.password
+                    )}
+                  />
+                  {touched && touched.password && errors && errors.password && (
+                    <p className="font-normal text-red-500 text-[12px]">
+                      {errors.password}
+                    </p>
+                  )}
+                </div>
               </div>
               {req && (
                 <Typography
