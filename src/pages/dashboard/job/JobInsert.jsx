@@ -518,7 +518,7 @@ export const JobInsert = () => {
                       color="blue-gray"
                       className="mb-2 font-medium"
                     >
-                      กลุ่มเป้าหมาย (ไครดู?){" "}
+                      กลุ่มเป้าหมาย (ใครดู?){" "}
                       <span className="text-red-500">*</span>
                     </Typography>
                     <Input
@@ -625,7 +625,7 @@ export const JobInsert = () => {
                       color="blue-gray"
                       className="mb-2 font-medium"
                     >
-                      KEY MESSAGE / FORMAT{" "}
+                      KEY MESSAGE
                       <span className="text-red-500">*</span>
                     </Typography>
                     <Input
