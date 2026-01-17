@@ -549,6 +549,7 @@ export function JobTable() {
             reviewer_Name: itemJob ? itemJob.reviewer_Name : "",
             employee_Id: itemJob ? itemJob.employee_Id ?? "" : "",
             employee_FirstName: itemJob ? itemJob.employee_FirstName : "",
+            empDpt_Id:itemJob ? itemJob.empDpt_Id : "",
             department_Id: itemJob ? itemJob.department_Id ?? "" : "",
             position_Id: itemJob ? itemJob.position_Id ?? "" : "",
             isShow: itemJob ? itemJob.isShow ?? "" : "",
@@ -596,9 +597,7 @@ export function JobTable() {
                             แผนก
                           </Typography>
                           <Typography className="text-[16px] font-normal text-black">
-                            {dpmData.find(
-                              (fd) => fd?.id === values.department_Id
-                            )?.name || ""}
+                            {values.empDpt_Id && departmentData(values.empDpt_Id)}
                           </Typography>
                         </div>
                         <div>
