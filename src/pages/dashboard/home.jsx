@@ -6,18 +6,23 @@ import {
   CardBody,
   Progress,
 } from "@material-tailwind/react";
-import { ReportDepatrmentListService } from "@/services/job.service";
+import { ReportDepatrmentListService, ReportHistoryTimeService, ReportStatusListService } from "@/services/job.service";
 import MyContext from "@/context/MyContext";
+import { StatisticsCard } from "@/widgets/cards";
 
 export function Home() {
   const { setLoader } = useContext(MyContext);
   const [dpms, setDpms] = useState([]);
+  const [staList, setStaList] = useState([]);
+  const [hisTime, setHisTime] = useState({days:0,hours:0,minutes:0,totalCount:0});
 
   useEffect( () => {
-    fetchData();
+    fetchDataDPMS();
+    fetchDataStatus()
+    fetchDataHistoryTime()
   }, []);
 
-  const fetchData = async () => {
+  const fetchDataDPMS = async () => {
     setLoader(true);
     const resp = await ReportDepatrmentListService();
     if (resp) {
@@ -25,11 +30,77 @@ export function Home() {
     } else {
       setDpms([]);
     }
-    setLoader(false);
   };
 
+  const fetchDataStatus = async () => {
+    const resp = await ReportStatusListService();
+    if (resp) {
+      setStaList(resp);
+    } else {
+      setStaList([]);
+    }
+  };
+
+  const fetchDataHistoryTime = async () => {
+    const resp = await ReportHistoryTimeService();
+    if (resp) {
+      setHisTime(resp);
+    } else {
+      setHisTime({day:0,hours:0,minutes:0});
+    }
+    setLoader(false);
+  };
+ 
   return (
     <div className="mt-12 min-h-[75vh]">
+      <div className="mb-12 grid gap-y-2 gap-x-2 md:grid-cols-2 xl:grid-cols-5">
+        {/* {statisticsCardsData.map(({ icon, title, footer, ...rest }) => ( */}
+       {hisTime && <StatisticsCard
+          value={`${hisTime.totalCount}`}
+          title={"งานทั้งหมด"}
+        />}
+        {staList &&
+          staList.length > 0 &&
+          staList
+            .sort((a, b) => a.jobStatus_Id.localeCompare(b.jobStatus_Id))
+            .map(({ jobStatus_Id, jobStatus_Name, total }) => {
+              if (
+                jobStatus_Id === "S02" ||
+                jobStatus_Id === "S03" ||
+                jobStatus_Id === "S05"
+              )
+                return (
+                  <StatisticsCard
+                    key={jobStatus_Id}
+                    value={total ? total : 0}
+                    title={jobStatus_Name}
+                    // icon={React.createElement(icon, {
+                    //   className: "w-6 h-6 text-white",
+                    // })}
+                    // footer={
+                    //   <Typography className="font-normal text-blue-gray-600">
+                    //     <strong className={color}>{footer.value}</strong>
+                    //     &nbsp;{footer.label}
+                    //   </Typography>
+                    // }
+                  />
+                );
+            })}
+        {hisTime && <StatisticsCard
+          value={` ${hisTime.days} วัน ${hisTime.hours} ชั่วโมง ${hisTime.minutes} นาที`}
+          title={"ระยะเวลา (เฉลี่ย)"}
+          // icon={React.createElement(icon, {
+          //   className: "w-6 h-6 text-white",
+          // })}
+          // footer={
+          //   <Typography className="font-normal text-blue-gray-600">
+          //     <strong className={color}>{footer.value}</strong>
+          //     &nbsp;{footer.label}
+          //   </Typography>
+          // }
+        />}
+        {/* ))} */}
+      </div>
       <div className="mb-4 grid grid-cols-1 gap-6 ">
         <Card className="overflow-hidden xl:col-span-2 border border-blue-gray-100 shadow-sm">
           <CardHeader
@@ -131,7 +202,7 @@ export function Home() {
                         </td>
                       </tr>
                     );
-                  }
+                  },
                 )}
               </tbody>
             </table>
@@ -194,7 +265,7 @@ export function Home() {
             )}
           </CardBody>
         </Card> */}
-      </div>    
+      </div>
     </div>
   );
 }
