@@ -94,6 +94,11 @@ export const dpmData = [
     sec_name: "ส่วนทรัพยากรมนุษย์",
     name: "ทรัพยากรมนุษย์",
   },
+  {
+    id: "D020",
+    sec_name: "พยาบาล",
+    name: "OPD1",
+  },
 ];
 
 export default dpmData;

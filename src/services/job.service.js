@@ -46,8 +46,6 @@ export const GetByIdJobService = async (id) => {
   }
 };
 
-
-
 export const InsertJobService = async (formData) => {
   try {
     const body = JSON.stringify({ action: "insert", ...formData});
@@ -77,6 +75,7 @@ export const InsertJobHistoryService = async (formData) => {
     throw error;
   }
 };
+
 export const UpdateJobService = async (formData) => {
   try {
     const body = JSON.stringify({ action: "update", ...formData});
