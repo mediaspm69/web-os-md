@@ -765,6 +765,7 @@ export function JobUpdate() {
                   รายละเอียดเพิ่มเติม
                 </Typography>
                 <Textarea
+                  placeholder="มีรายการ โปรชัวร์ 10 แผ่น..."
                   className={`
                       rounded-md 
                       focus:border-[0.5px] 

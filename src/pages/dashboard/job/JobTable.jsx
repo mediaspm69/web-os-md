@@ -706,6 +706,7 @@ export function JobTable() {
                               ข้อความ
                             </Typography>
                             <Textarea
+                              placeholder="อยู่ระหว่างการดำเนินงาน..."
                               className="rounded-md focus:border-[0.5px] appearance-none  !border-t-blue-gray-200 placeholder:text-blue-gray-300 placeholder:opacity-100 focus:!border-t-gray-900 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                               labelProps={{
                                 className:

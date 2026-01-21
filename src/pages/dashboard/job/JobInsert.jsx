@@ -792,6 +792,7 @@ export const JobInsert = () => {
                     }}
                     name="job_Detail"
                     value={values.job_Detail}
+                    placeholder="มีรายการ โปรชัวร์ 10 แผ่น..."
                     onChange={handleChange}
                     onBlur={handleBlur}
                     error={Boolean(
