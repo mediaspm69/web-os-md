@@ -7,6 +7,7 @@ import SpinnerLoader from "./components/SpinerLoader";
 import { useMemo } from "react";
 import { GetByIdEmployeeService } from "./services/employee.service";
 import routes from "./routes";
+import { GetAllDpmService } from "./services/department.service";
 
 function App() {
   const state = ContextState();
@@ -18,8 +19,8 @@ function App() {
   const checkToken = token && token !== undefined ? true : false;
 
   useMemo(async () => {
+    state.setLoader(true);
     if (checkToken) {
-      state.setLoader(true);
       const resp = await GetByIdEmployeeService(token);
       if (resp) {
         if (resp.status_id === "S01") {
@@ -34,8 +35,16 @@ function App() {
         }
         state.setDataEmp(resp);
       }
-      state.setLoader(false);
     }
+    
+    if (!state.dpms) {
+      const dpms = await GetAllDpmService();
+      if (dpms) {
+        state.setDpms(dpms);
+      }
+    }
+
+    state.setLoader(false);
   }, []);
 
   const handleChangeRoutes = (check) => {

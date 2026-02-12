@@ -4,6 +4,7 @@ import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "@material-tailwind/react";
 import { MaterialTailwindControllerProvider } from "@/context";
+import "react-day-picker/style.css";
 import "../public/css/tailwind.css";
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

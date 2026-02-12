@@ -32,7 +32,7 @@ export const dpmData = [
   {
     id: "D007",
     sec_name: "ส่วนการเงิน",
-    name: "การเงินธุรกำร",
+    name: "การเงินธุรการ",
   },
   {
     id: "D008",
@@ -62,7 +62,7 @@ export const dpmData = [
   {
     id: "D013",
     sec_name: "ส่วนบัญชี",
-    name: "ค่าตอบแทนแพทย",
+    name: "ค่าตอบแทนแพทย์",
   },
   {
     id: "D014",
@@ -98,6 +98,21 @@ export const dpmData = [
     id: "D020",
     sec_name: "พยาบาล",
     name: "OPD1",
+  },
+  {
+    id: "D021",
+    sec_name: "สนง.เลขานุการ",
+    name: "เลขานุการ",
+  },  
+  {
+    id: "D022",
+    sec_name: "ศูนย์คุณภาพ",
+    name: "ศูนย์คุณภาพ",
+  },  
+  {
+    id: "D999",
+    sec_name: "อื่นๆ",
+    name: "อื่นๆ",
   },
 ];
 

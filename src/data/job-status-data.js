@@ -19,13 +19,11 @@ export const jsData = [
     name: "ไม่สำเร็จ",
     color: "yellow",
   },
-  ,
   {
     id: "S05",
     name: "ยกเลิกงาน",
     color: "gray",
   },
-  ,
   {
     id: "S06",
     name: "ไม่รับงาน",

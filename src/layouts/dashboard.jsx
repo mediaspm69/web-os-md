@@ -39,9 +39,9 @@ export function Dashboard() {
           {routes.filter((ft)=> ft.token === true && ft.role === empRole).map(
             ({ layout, pages }) =>
               layout === "dashboard" &&
-              pages.map(({ path, element, elements }) => {
-                if (elements && elements.length > 0) {
-                  const elementRoute = elements.map(
+              pages.map(({ path, element, pages2 }) => {
+                if (pages2 && pages2.length > 0) {
+                  const elementRoute = pages2.map(
                     ({ path2, element2 }, key2) => (
                       <Route key={key2} exact path={path2} element={element2} />
                     )

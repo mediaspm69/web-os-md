@@ -1,4 +1,3 @@
-
 //id : ไอดี
 //js_id : ส่งสถานะ
 //status_id : รับสถานะ
@@ -18,7 +17,6 @@ export const jobStaManager = [
     status_id: "S01",
     name: "ไม่รับงาน",
     color: "orange",
-
   },
   {
     id: "3",

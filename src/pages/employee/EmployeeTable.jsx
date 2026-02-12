@@ -12,7 +12,7 @@ import {
   DialogFooter,
   CardFooter,
 } from "@material-tailwind/react";
-import { dpmData, pstData, roleData, staEmpData } from "@/data";
+import {  pstData, roleData, staEmpData } from "@/data";
 import { useContext, useEffect, useMemo, useState } from "react";
 import {
   DeleteEmployeeService,
@@ -40,7 +40,7 @@ const updateStatusSchema = Yup.object().shape({
 
 export function EmployeeTable() {
   const navigate = useNavigate();
-  const { setLoader } = useContext(MyContext);
+  const { setLoader,dpms } = useContext(MyContext);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [employee, setEmployee] = useState({
@@ -110,9 +110,13 @@ export function EmployeeTable() {
 
   const departmentData = (id) => {
     if (id) {
-      const dpmName = dpmData.find((fd) => fd?.id === id)?.name;
-      if (dpmName) {
-        return dpmName;
+      if (dpms && dpms.length > 0) {
+        const dpmName = dpms.find(
+          (fd) => fd?.department_Id === id,
+        )?.department_Name;
+        if (dpmName) {
+          return dpmName;
+        }
       }
     }
     return "";
@@ -207,7 +211,7 @@ export function EmployeeTable() {
           <Typography variant="h6" color="white">
             ตารางพนักงาน
           </Typography>
-          <Button
+          {/* <Button
             onClick={() => navigate("insert")}
             className="flex justify-center items-center bg-[#FFFFFF]"
           >
@@ -215,7 +219,7 @@ export function EmployeeTable() {
             <Typography variant="h3" className="text- text-xs text-[#0057A1]">
               เพิ่มพนักงาน
             </Typography>
-          </Button>
+          </Button> */}
         </CardHeader>
         <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
           <table className="w-full min-w-[640px] table-auto">

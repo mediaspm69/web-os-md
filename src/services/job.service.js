@@ -1,9 +1,9 @@
 import axios from "axios";
 import { jobService } from "../helpers/contents";
 
-export const GetListJobService = async (page,pageSize,department_Id,role_Id) => {
+export const GetListJobService = async (page,pageSize,department_Id,role_Id,searchData) => {
   try {
-    const body = JSON.stringify({ action: "getlist" ,page,pageSize,department_Id,role_Id});
+    const body = JSON.stringify({ action: "getlist" ,page,pageSize,department_Id,role_Id,...searchData});
     const resp = await axios.post(jobService.JOB_URL, body);
     let json = await resp.data;
     if (json && json.success) {
@@ -136,9 +136,9 @@ export const RemoveIsShowService = async (id,isShow) => {
   }
 };
 
-export const ReportStatusListService = async () => {
+export const ReportStatusListService = async (role_Id,department_Id) => {
   try {
-    const body = JSON.stringify({ action: "reportStatusList" });
+    const body = JSON.stringify({ action: "reportStatusList",role_Id,department_Id});
     const resp = await axios.post(jobService.JOB_URL, body);
     let json = await resp.data;
     if (json && json.success) {
@@ -181,6 +181,19 @@ export const ReportDepatrmentListService = async () => {
   }
 };
 
-
+export const ReportChartJobsService = async (year,role_Id,department_Id) => {
+  try {
+    const body = JSON.stringify({ action: "report_chartjob",year:parseInt(year),role_Id,department_Id});
+    const resp = await axios.post(jobService.JOB_URL, body);
+    let json = await resp.data;
+    if (json && json.success) {
+      return json.data;
+    }
+    return null;
+  } catch (error) {
+    console.log("Error fetching movie details:", error);
+    throw error;
+  }
+};
 
 

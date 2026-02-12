@@ -10,14 +10,13 @@ import { Form, Formik } from "formik";
 import { Link } from "react-router-dom";
 import * as Yup from "yup";
 
-//data
-import { dpmData } from "@/data";
 //helpers
 import { inputLengthEnglish } from "@/helpers/format";
 import { InsertEmployeeService } from "@/services/employee.service";
 import Swal from "sweetalert2";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import MyContext from "@/context/MyContext";
+import { GetAllDpmService } from "@/services/department.service";
 
 const signUpSchema = Yup.object().shape({
   username: Yup.string()
@@ -46,10 +45,9 @@ const signUpSchema = Yup.object().shape({
 });
 
 export function SignUp() {
-  const { setLoader } = useContext(MyContext);
+  const { dpms,setLoader } = useContext(MyContext);
 
   const onSubmitSignUp = async (val, resetForm) => {
-    console.log('val',val);
     
     setLoader(true);
     const resp = await InsertEmployeeService(val);
@@ -242,9 +240,9 @@ export function SignUp() {
    
                     >
                       <option value="">None</option>
-                      {dpmData.map((dpm, index) => (
-                        <option value={dpm.id} key={index}>
-                          {dpm.name}
+                      {dpms && dpms.length > 0 && dpms.map(({department_Id,department_Name}, index) => (
+                        <option value={department_Id} key={index}>
+                          {department_Name}
                         </option>
                       ))}
                     </select>

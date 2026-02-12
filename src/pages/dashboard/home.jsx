@@ -6,21 +6,40 @@ import {
   CardBody,
   Progress,
 } from "@material-tailwind/react";
-import { ReportDepatrmentListService, ReportHistoryTimeService, ReportStatusListService } from "@/services/job.service";
+import {
+  ReportChartJobsService,
+  ReportDepatrmentListService,
+  ReportHistoryTimeService,
+  ReportStatusListService,
+} from "@/services/job.service";
 import MyContext from "@/context/MyContext";
 import { StatisticsCard } from "@/widgets/cards";
+import ReactApexChart from "react-apexcharts";
+import { monthTH } from "@/helpers/month";
+import { PrivateRoute } from "@/guard/PrivateRoute";
+import { PrivateRouteList } from "@/guard/PrivateRouteList";
 
 export function Home() {
-  const { setLoader } = useContext(MyContext);
+  const { dataEmp, setLoader } = useContext(MyContext);
   const [dpms, setDpms] = useState([]);
   const [staList, setStaList] = useState([]);
-  const [hisTime, setHisTime] = useState({days:0,hours:0,minutes:0,totalCount:0});
+  const [hisTime, setHisTime] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    totalCount: 0,
+  });
+  const [chartJobs, setChartJobs] = useState([]);
+  const [yearJobs, setYearJob] = useState(null);
 
-  useEffect( () => {
+  const year = new Date().getFullYear();
+
+  useEffect(() => {
     fetchDataDPMS();
-    fetchDataStatus()
-    fetchDataHistoryTime()
-  }, []);
+    fetchDataStatus();
+    fetchDataHistoryTime();
+    fetchDataChartJob();
+  }, [yearJobs, dataEmp]);
 
   const fetchDataDPMS = async () => {
     setLoader(true);
@@ -33,11 +52,16 @@ export function Home() {
   };
 
   const fetchDataStatus = async () => {
-    const resp = await ReportStatusListService();
-    if (resp) {
-      setStaList(resp);
-    } else {
-      setStaList([]);
+    if (dataEmp && dataEmp.role_id && dataEmp.dpm_id) {
+      const resp = await ReportStatusListService(
+        dataEmp.role_id,
+        dataEmp.dpm_id,
+      );
+      if (resp) {
+        setStaList(resp);
+      } else {
+        setStaList([]);
+      }
     }
   };
 
@@ -46,19 +70,164 @@ export function Home() {
     if (resp) {
       setHisTime(resp);
     } else {
-      setHisTime({day:0,hours:0,minutes:0});
+      setHisTime({ day: 0, hours: 0, minutes: 0 });
+    }
+  };
+
+  const fetchDataChartJob = async () => {
+    if (dataEmp && dataEmp.role_id && dataEmp.dpm_id) {
+      const resp = await ReportChartJobsService(
+        yearJobs ? yearJobs : year,
+        dataEmp.role_id,
+        dataEmp.dpm_id,
+      );
+      if (resp) {
+        setChartJobs(resp);
+      } else {
+        setChartJobs([]);
+      }
     }
     setLoader(false);
   };
- 
+
+  const getYearsDown = (currentYear) => {
+    let years = [currentYear];
+    let number = 0;
+    for (let i = 0; i < 4; i++) {
+      number = number + 1;
+      const newYear = currentYear - number;
+      years.push(newYear);
+    }
+    return years;
+  };
+
+  const chartData = (jobs) => {
+    return [
+      {
+        emtYear: year && (
+          <div className="flex justify-end w-full">
+            <div className="w-[250px] mx-auto">
+              <select
+                value={yearJobs || year}
+                onChange={(e) => setYearJob(e.target.value)}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              >
+                {getYearsDown(year).map((item, index) => (
+                  <option key={index} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        ),
+        series: [
+          {
+            name: "จำนวน",
+            data: jobs && jobs.length > 0 && jobs.map((item) => item.count),
+          },
+        ],
+        options: {
+          chart: {
+            height: 350,
+            type: "line",
+            zoom: {
+              enabled: false,
+            },
+          },
+          dataLabels: {
+            enabled: false,
+          },
+          stroke: {
+            curve: "straight",
+          },
+          title: {
+            text: "ปริมาณงานที่แจ้ง",
+            align: "left",
+          },
+          grid: {
+            row: {
+              colors: ["#f3f3f3", "transparent"], // takes an array which will be repeated on columns
+              opacity: 0.5,
+            },
+          },
+          xaxis: {
+            title: { text: "เดือน" },
+            categories: monthTH,
+          },
+        },
+      },
+      // {
+      //   emtYear: year && (
+      //     <div className="flex justify-end w-full">
+      //       <div className="w-[250px] mx-auto">
+      //         <select
+
+      //           value={yearMember || year}
+      //           onChange={(e) => setYearMember(e.target.value)}
+      //           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+      //         >
+      //           {getYearsDown(year).map((item,index) => (
+      //             <option key={index} value={item}>{item}</option>
+      //           ))}
+      //         </select>
+      //       </div>
+      //     </div>
+      //   ),
+      //   series: [
+      //     {
+      //       name: "จำนวน",
+      //       data: members.map((item) => item.count),
+      //     },
+      //   ],
+      //   options: {
+      //     chart: {
+      //       height: 350,
+      //       type: "line",
+      //       zoom: {
+      //         enabled: false,
+      //       },
+      //     },
+      //     dataLabels: {
+      //       enabled: false,
+      //     },
+      //     stroke: {
+      //       curve: "straight",
+      //     },
+      //     title: {
+      //       text: "จำนวนข้อมูลสมาชิก",
+      //       align: "left",
+      //     },
+      //     grid: {
+      //       row: {
+      //         colors: ["#f3f3f3", "transparent"], // takes an array which will be repeated on columns
+      //         opacity: 0.5,
+      //       },
+      //     },
+      //     xaxis: {
+      //       name: "เดือน",
+      //       categories: monthTH,
+      //     },
+      //   },
+      // },
+    ];
+  };
+
   return (
     <div className="mt-12 min-h-[75vh]">
       <div className="mb-12 grid gap-y-2 gap-x-2 md:grid-cols-2 xl:grid-cols-5">
-        {/* {statisticsCardsData.map(({ icon, title, footer, ...rest }) => ( */}
-       {hisTime && <StatisticsCard
-          value={`${hisTime.totalCount}`}
-          title={"งานทั้งหมด"}
-        />}
+        <PrivateRouteList
+          role={dataEmp && dataEmp.role_id}
+          roles={["R01", "R99"]}
+        >
+          {hisTime && (
+            <StatisticsCard
+              value={`${hisTime.totalCount}`}
+              title={"งานทั้งหมด"}
+            />
+          )}
+        </PrivateRouteList>
+
         {staList &&
           staList.length > 0 &&
           staList
@@ -74,58 +243,50 @@ export function Home() {
                     key={jobStatus_Id}
                     value={total ? total : 0}
                     title={jobStatus_Name}
-                    // icon={React.createElement(icon, {
-                    //   className: "w-6 h-6 text-white",
-                    // })}
-                    // footer={
-                    //   <Typography className="font-normal text-blue-gray-600">
-                    //     <strong className={color}>{footer.value}</strong>
-                    //     &nbsp;{footer.label}
-                    //   </Typography>
-                    // }
                   />
                 );
             })}
-        {hisTime && <StatisticsCard
-          value={` ${hisTime.days} วัน ${hisTime.hours} ชั่วโมง ${hisTime.minutes} นาที`}
-          title={"ระยะเวลา (เฉลี่ย)"}
-          // icon={React.createElement(icon, {
-          //   className: "w-6 h-6 text-white",
-          // })}
-          // footer={
-          //   <Typography className="font-normal text-blue-gray-600">
-          //     <strong className={color}>{footer.value}</strong>
-          //     &nbsp;{footer.label}
-          //   </Typography>
-          // }
-        />}
-        {/* ))} */}
+        <PrivateRouteList
+          role={dataEmp && dataEmp.role_id}
+          roles={["R01", "R99"]}
+        >
+          {hisTime && (
+            <StatisticsCard
+              value={` ${hisTime.days} วัน ${hisTime.hours} ชั่วโมง ${hisTime.minutes} นาที`}
+              title={"ระยะเวลา (เฉลี่ย)"}
+            />
+          )}
+        </PrivateRouteList>
       </div>
       <div className="mb-4 grid grid-cols-1 gap-6 ">
-        <Card className="overflow-hidden xl:col-span-2 border border-blue-gray-100 shadow-sm">
-          <CardHeader
-            floated={false}
-            shadow={false}
-            color="transparent"
-            className="m-0 flex items-center justify-between p-6"
-          >
-            <div>
-              <Typography
-                variant="h6"
-                color="blue-gray"
-                className="mb-1 text-[18px]"
-              >
-                สถิติการสั่งงานแยกตามแผนก
-              </Typography>
-              {/* <Typography
+        <PrivateRouteList
+          role={dataEmp && dataEmp.role_id}
+          roles={["R01", "R99"]}
+        >
+          <Card className="overflow-hidden xl:col-span-2 border border-blue-gray-100 shadow-sm">
+            <CardHeader
+              floated={false}
+              shadow={false}
+              color="transparent"
+              className="m-0 flex items-center justify-between p-6"
+            >
+              <div>
+                <Typography
+                  variant="h6"
+                  color="blue-gray"
+                  className="mb-1 text-[18px]"
+                >
+                  สถิติการสั่งงานแยกตามแผนก
+                </Typography>
+                {/* <Typography
                 variant="small"
                 className="flex items-center gap-1 font-normal text-blue-gray-600"
               >
                 <CheckCircleIcon strokeWidth={3} className="h-4 w-4 text-blue-gray-200" />
                 <strong>30 done</strong> this month
               </Typography> */}
-            </div>
-            {/* <Menu placement="left-start">
+              </div>
+              {/* <Menu placement="left-start">
               <MenuHandler>
                 <IconButton size="sm" variant="text" color="blue-gray">
                   <EllipsisVerticalIcon
@@ -141,73 +302,75 @@ export function Home() {
                 <MenuItem>Something else here</MenuItem>
               </MenuList>
             </Menu> */}
-          </CardHeader>
-          <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
-            <table className="w-full min-w-[640px] table-auto">
-              <thead>
-                <tr>
-                  {["แผนก", "จำนวน"].map((el) => (
-                    <th
-                      key={el}
-                      className="border-b border-blue-gray-50 py-3 px-6 text-left "
-                    >
-                      <Typography
-                        variant="small"
-                        className="text-[16px] font-bold uppercase text-blue-gray-400"
+            </CardHeader>
+            <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
+              <table className="w-full min-w-[640px] table-auto">
+                <thead>
+                  <tr>
+                    {["แผนก", "จำนวน"].map((el) => (
+                      <th
+                        key={el}
+                        className="border-b border-blue-gray-50 py-3 px-6 text-left "
                       >
-                        {el}
-                      </Typography>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {dpms.map(
-                  ({ department_Id, department_Name, total }, index) => {
-                    const className = `py-3 px-5 ${
-                      index === dpms.length - 1
-                        ? ""
-                        : "border-b border-blue-gray-50"
-                    }`;
+                        <Typography
+                          variant="small"
+                          className="text-[16px] font-bold uppercase text-blue-gray-400"
+                        >
+                          {el}
+                        </Typography>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {dpms.map(
+                    ({ department_Id, department_Name, total }, index) => {
+                      const className = `py-3 px-5 ${
+                        index === dpms.length - 1
+                          ? ""
+                          : "border-b border-blue-gray-50"
+                      }`;
 
-                    return (
-                      <tr key={index}>
-                        <td className={className}>
-                          <div className="flex items-center gap-4">
-                            {/* <Avatar src={img} alt={name} size="sm" /> */}
-                            <Typography
-                              variant="small"
-                              color="blue-gray"
-                              className="font-bold"
-                            >
-                              {department_Name}
-                            </Typography>
-                          </div>
-                        </td>
-                        <td className={className}>
-                          <div className="w-10/12">
-                            <Typography
-                              variant="small"
-                              className="mb-1 block text-xs font-medium text-blue-gray-600"
-                            >
-                              {total}
-                            </Typography>
-                            <Progress
-                              value={total}
-                              variant="gradient"
-                              color={total === 100 ? "green" : "blue"}
-                              className="h-1"
-                            />
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  },
-                )}
-              </tbody>
-            </table>
-          </CardBody>
-        </Card>
+                      return (
+                        <tr key={index}>
+                          <td className={className}>
+                            <div className="flex items-center gap-4">
+                              {/* <Avatar src={img} alt={name} size="sm" /> */}
+                              <Typography
+                                variant="small"
+                                color="blue-gray"
+                                className="font-bold"
+                              >
+                                {department_Name}
+                              </Typography>
+                            </div>
+                          </td>
+                          <td className={className}>
+                            <div className="w-10/12">
+                              <Typography
+                                variant="small"
+                                className="mb-1 block text-xs font-medium text-blue-gray-600"
+                              >
+                                {total}
+                              </Typography>
+                              <Progress
+                                value={total}
+                                variant="gradient"
+                                color={total === 100 ? "green" : "blue"}
+                                className="h-1"
+                              />
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    },
+                  )}
+                </tbody>
+              </table>
+            </CardBody>
+          </Card>
+        </PrivateRouteList>
+
         {/* <Card className="border border-blue-gray-100 shadow-sm">
           <CardHeader
             floated={false}
@@ -265,6 +428,24 @@ export function Home() {
             )}
           </CardBody>
         </Card> */}
+      </div>
+      <div className="w-[100%]">
+        {chartJobs &&
+          chartJobs.length > 0 &&
+          chartData(chartJobs).map(({ options, series, emtYear }, index) => {
+            return (
+              <div key={index} id="chart" className="h-[450px] w-[100%] mb-20">
+                {emtYear}
+                <ReactApexChart
+                  options={options}
+                  series={series}
+                  type="line"
+                  height={"100%"}
+                  width={"100%"}
+                />
+              </div>
+            );
+          })}
       </div>
     </div>
   );

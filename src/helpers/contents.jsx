@@ -8,6 +8,11 @@ export const jobService = {
   JOB_URL: `https://script.google.com/macros/s/${import.meta.env.VITE_JOB_BEARERTOKEN}/exec`,
 };
 
+export const dpmService = {
+  DPM_URL: `https://script.google.com/macros/s/${import.meta.env.VITE_DEPARTMENT_BEARERTOKEN}/exec`,
+};
+
+
 export const removeAllStorage = async () => {
   let keys = ["empId","empCode","empUsername","empRole"];
   keys.forEach((k) => localStorage.removeItem(k));

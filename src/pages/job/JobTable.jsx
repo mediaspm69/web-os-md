@@ -11,6 +11,12 @@ import {
   Textarea,
   Chip,
   CardFooter,
+  Input,
+  PopoverHandler,
+  Popover,
+  PopoverContent,
+  Select,
+  Option,
 } from "@material-tailwind/react";
 import {
   DeleteJobService,
@@ -24,6 +30,8 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ArrowPathIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
   InformationCircleIcon,
   LightBulbIcon,
   LinkIcon,
@@ -34,13 +42,7 @@ import MyContext from "@/context/MyContext";
 import Swal from "sweetalert2";
 
 import { toThaiDateTimeString } from "@/helpers/format";
-import {
-  dpmData,
-  jobIsShowData,
-  jobStaEmp,
-  jobStaManager,
-  jsData,
-} from "@/data";
+import { jobIsShowData, jobStaEmp, jobStaManager, jsData } from "@/data";
 import { JobHsitoryTimeline } from "./sections/JobHsitoryTimeline";
 import { Form, Formik } from "formik";
 import { format } from "date-fns";
@@ -48,10 +50,11 @@ import { th } from "date-fns/locale";
 import { OSPagination } from "@/components/OSPagination";
 import { PrivateRouteList } from "@/guard/PrivateRouteList";
 import { PrivateRoute } from "@/guard/PrivateRoute";
+import { DayPicker } from "react-day-picker";
 
 export function JobTable() {
   const navigate = useNavigate();
-  const { dataEmp, setLoader } = useContext(MyContext);
+  const { dataEmp, setLoader, dpms } = useContext(MyContext);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [jobs, setJobs] = useState({
@@ -61,13 +64,18 @@ export function JobTable() {
     totalPages: 1,
     data: [],
   });
+  const [seas, setSeas] = useState({
+    employee_Id: "",
+    jobStatus_Id: "",
+    days: [],
+  });
   const [open, setOpen] = useState(false);
   const [itemJob, setItemJob] = useState();
   const [jobHistory, setJobHistory] = useState([]);
 
   useEffect(() => {
     fetchData();
-  }, [page, pageSize, dataEmp]);
+  }, [page, pageSize, dataEmp,seas]);
 
   useEffect(() => {
     const intervalId = setInterval(fetchRealTimeData, 10000); // Fetch every 10 seconds
@@ -81,7 +89,8 @@ export function JobTable() {
         page,
         pageSize,
         dataEmp.dpm_id,
-        dataEmp.role_id
+        dataEmp.role_id,
+        seas
       );
 
       if (res) {
@@ -99,7 +108,7 @@ export function JobTable() {
         page,
         pageSize,
         dataEmp.dpm_id,
-        dataEmp.role_id
+        dataEmp.role_id,
       );
       if (res) {
         setJobs(res);
@@ -140,6 +149,24 @@ export function JobTable() {
     setPageSize(number);
   };
 
+  // const handleSearchData = async () => {
+  //   if (jobs.data.length) {
+  //     let newData = [];
+  //     if (secDays.length > 0) {
+  //       jobs.data.forEach((elm) => {
+  //         const creDate = format(elm.job_CreationDate, "dd/MM/yyyy");
+  //         const secDay = secDays.find((fdDay) => format(fdDay, "dd/MM/yyyy") === creDate);
+  //         if (Boolean(secDay)) {
+  //           newData.push({ ...elm });
+  //         }
+  //       });
+  //       return setJobs({ ...jobs, data: newData });
+  //     } else {
+  //       await fetchData();
+  //     }
+  //   }
+  // };
+
   const jobStatusData = (id) => {
     if (id) {
       const item = jsData.find((fd) => fd?.id === id);
@@ -154,9 +181,11 @@ export function JobTable() {
 
   const departmentData = (id) => {
     if (id) {
-      const dpmName = dpmData.find((fd) => fd?.id === id)?.name;
-      if (dpmName) {
-        return dpmName;
+      if (dpms && dpms.length > 0) {
+        const dpmName = dpms.find((fd) => fd?.department_Id === id,)?.department_Name;
+        if (dpmName) {
+          return dpmName;
+        }
       }
     }
     return "";
@@ -252,7 +281,7 @@ export function JobTable() {
     status_name,
     detail,
     rec_id,
-    rec_name
+    rec_name,
   ) => {
     handleClose();
     setLoader(true);
@@ -272,40 +301,197 @@ export function JobTable() {
     setLoader(false);
   };
 
+  const onSubmitSearch = async (value) => {
+    let newValue = value;
+    if (value.days.length > 0) {
+      const days = value.days.map((mDay) => format(mDay, "dd/MM/yyyy"));
+      newValue = { ...value, days };
+    }
+    console.log('newValue',newValue);
+    setSeas(newValue)
+  };
+  
   return (
     <>
       <div className="mt-12 mb-8 flex flex-col gap-12 min-h-[70vh]">
         <Card>
-          <CardHeader
-            variant="gradient"
-            className="mb-8 p-6 flex justify-between items-center bg-[#FFFFFF]"
-          >
-            <Typography variant="h6" className="text-[#0057A1]">
-              ข้อมูลการแจ้งงาน
-            </Typography>
+          <div className="mb-8 p-6 bg-[#FFFFFF] shadow-md rounded-xl mt-[-30px] mx-2">
+            <div className="w-full flex flex-row justify-between ">
+              <Typography variant="h6" className="text-[#0057A1]">
+                ข้อมูลการแจ้งงาน
+              </Typography>
 
-            <div className="flex justify-center items-center gap-4">
-              <PrivateRouteList
-                role={(dataEmp && dataEmp.role_id) || ""}
-                roles={["R02"]}
-              >
-                <Button
-                  onClick={() => navigate("insert")}
-                  className="flex justify-center items-center bg-[#0057A1]"
+              <div className="flex justify-center items-center gap-4">
+                <PrivateRouteList
+                  role={(dataEmp && dataEmp.role_id) || ""}
+                  roles={["R02"]}
                 >
-                  <Typography
-                    variant="h3"
-                    className="text- text-sm text-[#FFFFFF]"
+                  <Button
+                    onClick={() => navigate("insert")}
+                    className="flex justify-center items-center bg-[#0057A1]"
                   >
-                    แจ้งงานใหม่
-                  </Typography>
-                </Button>
-              </PrivateRouteList>
-              <IconButton color="green" onClick={async () => await fetchData()}>
-                <ArrowPathIcon className="w-5 h-5" />
-              </IconButton>
+                    <Typography
+                      variant="h3"
+                      className="text- text-sm text-[#FFFFFF]"
+                    >
+                      แจ้งงานใหม่
+                    </Typography>
+                  </Button>
+                </PrivateRouteList>
+                <IconButton
+                  color="green"
+                  onClick={async () => await fetchData()}
+                >
+                  <ArrowPathIcon className="w-5 h-5" />
+                </IconButton>
+              </div>
             </div>
-          </CardHeader>
+
+            <Formik
+              enableReinitialize
+              initialValues={{
+                employee_Id:  "",
+                jobStatus_Id: "",
+                days: [],
+              }}
+              onSubmit={onSubmitSearch}
+            >
+              {({
+                values,
+                handleChange,
+                handleSubmit,
+                handleBlur,
+                setFieldValue,
+              }) => (
+                <Form
+                  onSubmit={handleSubmit}
+                  className="p-3 flex md:flex-row flex-col md:justify-between justify-center items-center gap-2"
+                >
+                  <div className="flex md:flex-row flex-wrap  gap-2 w-full">
+                    <div className="flex flex-col md:w-fit w-full gap-2">
+                      <Typography className="text-sm text-black">
+                        สถานะ
+                      </Typography>
+                      <select
+                        className="md:w-fit w-full bg-transparent placeholder:text-blue-gray-400 text-blue-gray-700  text-sm rounded  px-3 py-2 transition duration-300 normal-case focus:outline-none border-[1px] focus:border-[1px] border-blue-gray-200 focus:border-blue-gray-900  hover:border-blue-gray-400  appearance-none cursor-pointer"
+                        name="jobStatus_Id"
+                        value={values.jobStatus_Id || ""}
+                        onChange={(e) => {
+                          setFieldValue("jobStatus_Id", e.target.value);
+                        }}
+                        onBlur={handleBlur}
+                      >
+                        <option value="">แสดงทั้งหมด</option>
+                        {jsData.map(({ id, name }, index) => (
+                          <option value={id} key={index}>
+                            {name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <PrivateRouteList
+                      role={(dataEmp && dataEmp.role_id) || ""}
+                      roles={["R01", "R02"]}
+                    >
+                      {dataEmp && dataEmp.id && (
+                        <div className="flex flex-col md:w-fit w-full gap-2">
+                          <Typography className="text-sm text-black">
+                            การแสดงผล
+                          </Typography>
+                          <select
+                            className="md:w-fit w-full bg-transparent placeholder:text-blue-gray-400 text-blue-gray-700  text-sm rounded  px-3 py-2 transition duration-300 normal-case focus:outline-none border-[1px] focus:border-[1px] border-blue-gray-200 focus:border-blue-gray-900  hover:border-blue-gray-400  appearance-none cursor-pointer"
+                            name="employee_Id"
+                            value={values.employee_Id || ""}
+                            onChange={(e) => {
+                              setFieldValue("employee_Id", e.target.value);
+                            }}
+                            onBlur={handleBlur}
+                          >
+                            <option value="">แสดงทั้งหมด</option>
+                            <option value={dataEmp.id}>เฉพาะผู้ใช้งาน</option>
+                          </select>
+                        </div>
+                      )}
+                    </PrivateRouteList>
+                    <div className="flex flex-col md:w-fit w-full gap-2">
+                      <Typography className="text-sm text-black">
+                        วันที่แจ้งงาน
+                      </Typography>
+                      <Popover placement="bottom">
+                        <PopoverHandler>
+                          <Button
+                            color="green"
+                            size="sm"
+                            variant="outlined"
+                            className="flex gap-2 h-fit "
+                          >
+                            {values.days ? (
+                              values.days.length > 0 ? (
+                                values.days.map((title, index) => (
+                                  <p key={index} className="text-sm">
+                                    {title ? format(title, "dd/MM/yyyy") : ""}
+                                  </p>
+                                ))
+                              ) : (
+                                <Typography className="text-sm">
+                                  วันที่เริ่ม - วันที่สิ้นสุด
+                                </Typography>
+                              )
+                            ) : (
+                              <Typography className="text-sm">
+                                กรุณารอสักครู่
+                              </Typography>
+                            )}
+                          </Button>
+                        </PopoverHandler>
+                        <PopoverContent>
+                          <DayPicker
+                            max={2}
+                            mode="multiple"
+                            selected={values.days}
+                            onSelect={(sec) => {
+                              if (sec.length > 1) {
+                                const newSec = sec.sort(
+                                  (a, b) => new Date(a) - new Date(b),
+                                );
+                                setFieldValue("days", newSec);
+                                return;
+                              }
+                              setFieldValue("days", sec);
+                            }}
+                            showOutsideDays
+                            components={{
+                              IconLeft: ({ ...props }) => (
+                                <ChevronLeftIcon
+                                  {...props}
+                                  className="h-4 w-4 stroke-2"
+                                />
+                              ),
+                              IconRight: ({ ...props }) => (
+                                <ChevronRightIcon
+                                  {...props}
+                                  className="h-4 w-4 stroke-2"
+                                />
+                              ),
+                            }}
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                  </div>
+                  <Button
+                    // onClick={handleSearchData}
+                    size="sm"
+                    color="blue"
+                    className="h-fit"
+                    type="submit"
+                  >
+                    ค้นหา
+                  </Button>
+                </Form>
+              )}
+            </Formik>
+          </div>
           <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
             <PrivateRouteList
               role={(dataEmp && dataEmp.role_id) || ""}
@@ -326,28 +512,48 @@ export function JobTable() {
                               <Typography variant="h6" color="black">
                                 {iJob.job_Code}
                               </Typography>
-                              <Typography variant="h6" color="gray">
-                                {`หัวข้อ: ${iJob.job_Name || ""}`}
+                              <Typography variant="h6" color="black">
+                                <span className="text-blue-gray-800">
+                                  หัวข้อ:
+                                </span>
+                                {` ${iJob.job_Name || ""}`}
                               </Typography>
-                              <Typography variant="h6" color="gray">
-                                {`ผู้แจ้ง: ${
-                                  iJob.employee_FirstName || ""
-                                } ผู้ตรวจสอบ: ${iJob.reviewer_Name || ""}`}
+                              <Typography variant="h6" color="black">
+                                <span className="text-blue-gray-800">
+                                  ผู้แจ้ง:
+                                </span>
+                                {` ${iJob.employee_FirstName || ""} `}
+                                <span className="text-blue-gray-800">
+                                  ผู้ตรวจสอบ:
+                                </span>
+                                {` ${iJob.reviewer_Name || ""}`}
                               </Typography>
                               {iJob.empDpt_Id && (
-                                <Typography variant="h6" color="gray">
-                                  {`แผนก: ${departmentData(iJob.empDpt_Id)} `}
+                                <Typography variant="h6" color="black">
+                                  <span className="text-blue-gray-800">
+                                    แผนกที่แจ้งงาน:
+                                  </span>
+                                  {` ${departmentData(iJob.empDpt_Id)} `}
                                 </Typography>
                               )}
-                              <Typography variant="h6" color="gray">
-                                {toThaiDateTimeString(iJob.job_DateTime)}
+                              <Typography variant="h6" color="black">
+                                <span className="text-blue-gray-800">
+                                  กำหนดส่ง:
+                                </span>
+                                {` ${toThaiDateTimeString(iJob.job_DateTime)} `}
+                              </Typography>
+                              <Typography variant="h6" color="black">
+                                <span className="text-blue-gray-800">
+                                  วันที่แจ้ง:
+                                </span>
+                                {` ${toThaiDateTimeString(iJob.job_CreationDate)}`}
                               </Typography>
                             </div>
                           </div>
                           <div className="flex md:flex-col md:justify-center justify-start md:items-end items-start gap-2">
                             {iJob.recipient_Name && (
                               <Chip
-                                color="green"
+                                color="purple"
                                 value={iJob.recipient_Name}
                                 className="w-fit h-fit"
                               />
@@ -525,39 +731,39 @@ export function JobTable() {
           </CardFooter>
         </Card>
       </div>
-      <Dialog open={open} handler={handleClose} size="xl">
+      <Dialog className="bg-white" open={open} handler={handleClose} size="xl">
         <Formik
           initialValues={{
-            job_Id: itemJob ? itemJob.job_Id ?? "" : "",
-            job_Name: itemJob ? itemJob.job_Name ?? "" : "",
-            job_Detail: itemJob ? itemJob.job_Detail ?? "" : "",
+            job_Id: itemJob ? (itemJob.job_Id ?? "") : "",
+            job_Name: itemJob ? (itemJob.job_Name ?? "") : "",
+            job_Detail: itemJob ? (itemJob.job_Detail ?? "") : "",
             job_DateTime: itemJob
-              ? format(itemJob.job_DateTime, "yyyy-MM-dd HH:mm", {
+              ? (format(itemJob.job_DateTime, "yyyy-MM-dd HH:mm", {
                   locale: th,
-                }) ?? ""
+                }) ?? "")
               : "",
             countUpdate: "",
-            job_Target: itemJob ? itemJob.job_Target ?? "" : "",
-            job_Objective: itemJob ? itemJob.job_Objective ?? "" : "",
-            job_mt: itemJob ? itemJob.job_mt ?? "" : "",
-            job_mf: itemJob ? itemJob.job_mf ?? "" : "",
-            job_file: itemJob ? itemJob.job_file ?? "" : "",
-            jobType_Id: itemJob ? itemJob.jobType_Id ?? "" : "",
-            jobStatus_Id: itemJob ? itemJob.jobStatus_Id ?? "" : "",
-            recipient_Id: itemJob ? itemJob.recipient_Id ?? "" : "",
-            recipient_Name: itemJob ? itemJob.recipient_Name ?? "" : "",
+            job_Target: itemJob ? (itemJob.job_Target ?? "") : "",
+            job_Objective: itemJob ? (itemJob.job_Objective ?? "") : "",
+            job_mt: itemJob ? (itemJob.job_mt ?? "") : "",
+            job_mf: itemJob ? (itemJob.job_mf ?? "") : "",
+            job_file: itemJob ? (itemJob.job_file ?? "") : "",
+            jobType_Id: itemJob ? (itemJob.jobType_Id ?? "") : "",
+            jobStatus_Id: itemJob ? (itemJob.jobStatus_Id ?? "") : "",
+            recipient_Id: itemJob ? (itemJob.recipient_Id ?? "") : "",
+            recipient_Name: itemJob ? (itemJob.recipient_Name ?? "") : "",
             reviewer_Name: itemJob ? itemJob.reviewer_Name : "",
-            employee_Id: itemJob ? itemJob.employee_Id ?? "" : "",
+            employee_Id: itemJob ? (itemJob.employee_Id ?? "") : "",
             employee_FirstName: itemJob ? itemJob.employee_FirstName : "",
-            empDpt_Id:itemJob ? itemJob.empDpt_Id : "",
-            department_Id: itemJob ? itemJob.department_Id ?? "" : "",
-            position_Id: itemJob ? itemJob.position_Id ?? "" : "",
-            isShow: itemJob ? itemJob.isShow ?? "" : "",
+            empDpt_Id: itemJob ? itemJob.empDpt_Id : "",
+            department_Id: itemJob ? (itemJob.department_Id ?? "") : "",
+            position_Id: itemJob ? (itemJob.position_Id ?? "") : "",
+            isShow: itemJob ? (itemJob.isShow ?? "") : "",
             history: "",
           }}
         >
           {({ values, handleChange, handleBlur }) => (
-            <Form>
+            <Form className="">
               <div className="flex flex-row justify-between p-2 gap-2 ">
                 <Typography className="text-[18px] font-bold">
                   {values.job_Name || ""}
@@ -597,7 +803,8 @@ export function JobTable() {
                             แผนก
                           </Typography>
                           <Typography className="text-[16px] font-normal text-black">
-                            {values.empDpt_Id && departmentData(values.empDpt_Id)}
+                            {values.empDpt_Id &&
+                              departmentData(values.empDpt_Id)}
                           </Typography>
                         </div>
                         <div>
@@ -660,13 +867,17 @@ export function JobTable() {
                         </div>
                       </div>
                       <div className="grid grid-cols-1  p-2 rounded-md ">
-                        <div className="border-[1px] border-gray-400 rounded-md p-2 bg-white">
+                        <div className="border-[1px] border-gray-400 rounded-md p-2 ">
                           <Typography className="text-[16px] font-normal text-blue-gray-700">
                             รายละเอียดเพิ่มเติม
                           </Typography>
-                          <Typography className="text-[16px] font-normal text-black">
-                            {values.job_Detail || ""}
-                          </Typography>
+                          {values.job_Detail && (
+                            <div
+                              dangerouslySetInnerHTML={{
+                                __html: values.job_Detail,
+                              }}
+                            />
+                          )}
                         </div>
                       </div>
                       {values.job_file && (
@@ -706,7 +917,7 @@ export function JobTable() {
                               ข้อความ
                             </Typography>
                             <Textarea
-                              placeholder="อยู่ระหว่างการดำเนินงาน..."
+                              placeholder="message"
                               className="rounded-md focus:border-[0.5px] appearance-none  !border-t-blue-gray-200 placeholder:text-blue-gray-300 placeholder:opacity-100 focus:!border-t-gray-900 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                               labelProps={{
                                 className:
@@ -729,7 +940,7 @@ export function JobTable() {
                 <div className="flex flex-col gap-2">
                   {values.recipient_Name && (
                     <Chip
-                      color="green"
+                      color="purple"
                       value={values.recipient_Name}
                       className="w-fit h-fit"
                     />
@@ -762,7 +973,7 @@ export function JobTable() {
                                 item.name,
                                 values.history,
                                 dataEmp.id,
-                                dataEmp.firstname
+                                dataEmp.firstname,
                               );
                             }}
                             variant="gradient"
@@ -794,7 +1005,7 @@ export function JobTable() {
                                   item.name,
                                   values.history,
                                   dataEmp.id,
-                                  dataEmp.firstname
+                                  dataEmp.firstname,
                                 );
                               }}
                               variant="gradient"
@@ -846,7 +1057,7 @@ export function JobTable() {
                                 item.name,
                                 values.history,
                                 values.position_Id,
-                                values.recipient_Name
+                                values.recipient_Name,
                               );
                             }}
                           >
