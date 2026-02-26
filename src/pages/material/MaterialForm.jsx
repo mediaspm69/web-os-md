@@ -1,129 +1,310 @@
-import {
-  PlusCircleIcon,
-} from "@heroicons/react/24/outline";
-import {
-  Typography,
-  Button,
-} from "@material-tailwind/react";
-import { useState } from "react";
+import { PlusCircleIcon } from "@heroicons/react/24/outline";
+import { Typography, Button } from "@material-tailwind/react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 //sections
 import { SectionFormCard } from "./sections/SectionFormCard";
 import { SectionFormDialogInUp } from "./sections/SectionFormDialogInUp";
-const authorsTableData = [
-  {
-    material_Id: "1",
-    material_Code: "M-001",
-    material_Image: "https://images.unsplash.com/photo-1606986628470-26a67fa4730c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    material_Name: "Sony Alpha a7 IV (ILCE-7M4)",
-    material_Detail: "เป็นกล้องมิเรอร์เลส Full-Frame ไฮบริดรุ่นยอดนิยม ความละเอียด 33MP ชิปประมวลผล BIONZ XR โฟกัสรวดเร็วแม่นยำ (Real-time Eye AF) ถ่ายวิดีโอสูงสุด 4K 60p 10-bit 4:2:2 พร้อมจอพับ Vari-angle และระบบกันสั่น 5 แกน (5.5EV) เหมาะสำหรับทั้งภาพนิ่งและวิดีโอระดับมืออาชีพ ",
-    material_Price: "25000",
-    material_Amount: "5",
-    material_Position: "คลังสื่อ ชั้น 2 ห้อง 204",
-    material_CreationDate: "23/04/18",
-    mtrType_Id: "กล้อง",
-  },
-  {
-    material_Id: "2",
-    material_Code: "M-002",
-    material_Image: "https://images.unsplash.com/photo-1606986628470-26a67fa4730c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    material_Name: "Sony Alpha a7 IV (ILCE-7M4)",
-    material_Detail: "เป็นกล้องมิเรอร์เลส Full-Frame ไฮบริดรุ่นยอดนิยม ความละเอียด 33MP ชิปประมวลผล BIONZ XR โฟกัสรวดเร็วแม่นยำ (Real-time Eye AF) ถ่ายวิดีโอสูงสุด 4K 60p 10-bit 4:2:2 พร้อมจอพับ Vari-angle และระบบกันสั่น 5 แกน (5.5EV) เหมาะสำหรับทั้งภาพนิ่งและวิดีโอระดับมืออาชีพ ",
-    material_Price: "25000",
-    material_Amount: "5",
-    material_Position: "คลังสื่อ ชั้น 2 ห้อง 204",
-    material_CreationDate: "23/04/18",
-    mtrType_Id: "กล้อง",
-  },
-  {
-    material_Id: "3",
-    material_Code: "M-003",
-    material_Image: "https://images.unsplash.com/photo-1606986628470-26a67fa4730c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    material_Name: "Sony Alpha a7 IV (ILCE-7M4)",
-    material_Detail: "เป็นกล้องมิเรอร์เลส Full-Frame ไฮบริดรุ่นยอดนิยม ความละเอียด 33MP ชิปประมวลผล BIONZ XR โฟกัสรวดเร็วแม่นยำ (Real-time Eye AF) ถ่ายวิดีโอสูงสุด 4K 60p 10-bit 4:2:2 พร้อมจอพับ Vari-angle และระบบกันสั่น 5 แกน (5.5EV) เหมาะสำหรับทั้งภาพนิ่งและวิดีโอระดับมืออาชีพ ",
-    material_Price: "25000",
-    material_Amount: "5",
-    material_Position: "คลังสื่อ ชั้น 2 ห้อง 204",
-    material_CreationDate: "23/04/18",
-    mtrType_Id: "กล้อง",
-  },
-  {
-    material_Id: "4",
-    material_Code: "M-004",
-    material_Image: "https://images.unsplash.com/photo-1510127034890-ba27508e9f1c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    material_Name: "Sony Alpha a7 IV (ILCE-7M4)",
-    material_Detail: "เป็นกล้องมิเรอร์เลส Full-Frame ไฮบริดรุ่นยอดนิยม ความละเอียด 33MP ชิปประมวลผล BIONZ XR โฟกัสรวดเร็วแม่นยำ (Real-time Eye AF) ถ่ายวิดีโอสูงสุด 4K 60p 10-bit 4:2:2 พร้อมจอพับ Vari-angle และระบบกันสั่น 5 แกน (5.5EV) เหมาะสำหรับทั้งภาพนิ่งและวิดีโอระดับมืออาชีพ ",
-    material_Price: "25000",
-    material_Amount: "0",
-    material_Position: "คลังสื่อ ชั้น 2 ห้อง 204",
-    material_CreationDate: "23/04/18",
-    mtrType_Id: "กล้อง",
-  },
-  {
-    material_Id: "5",
-    material_Code: "M-005",
-    material_Image: "https://images.unsplash.com/photo-1510127034890-ba27508e9f1c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    material_Name: "Sony Alpha a7 IV (ILCE-7M4)",
-    material_Detail: "เป็นกล้องมิเรอร์เลส Full-Frame ไฮบริดรุ่นยอดนิยม ความละเอียด 33MP ชิปประมวลผล BIONZ XR โฟกัสรวดเร็วแม่นยำ (Real-time Eye AF) ถ่ายวิดีโอสูงสุด 4K 60p 10-bit 4:2:2 พร้อมจอพับ Vari-angle และระบบกันสั่น 5 แกน (5.5EV) เหมาะสำหรับทั้งภาพนิ่งและวิดีโอระดับมืออาชีพ ",
-    material_Price: "25000",
-    material_Amount: "0",
-    material_Position: "คลังสื่อ ชั้น 2 ห้อง 204",
-    material_CreationDate: "23/04/18",
-    mtrType_Id: "กล้อง",
-  },
-  {
-    material_Id: "6",
-    material_Code: "M-006",
-    material_Image: "https://images.unsplash.com/photo-1510127034890-ba27508e9f1c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    material_Name: "Sony Alpha a7 IV (ILCE-7M4)",
-    material_Detail: "เป็นกล้องมิเรอร์เลส Full-Frame ไฮบริดรุ่นยอดนิยม ความละเอียด 33MP ชิปประมวลผล BIONZ XR โฟกัสรวดเร็วแม่นยำ (Real-time Eye AF) ถ่ายวิดีโอสูงสุด 4K 60p 10-bit 4:2:2 พร้อมจอพับ Vari-angle และระบบกันสั่น 5 แกน (5.5EV) เหมาะสำหรับทั้งภาพนิ่งและวิดีโอระดับมืออาชีพ ",
-    material_Price: "25000",
-    material_Amount: "0",
-    material_Position: "คลังสื่อ ชั้น 2 ห้อง 204",
-    material_CreationDate: "23/04/18",
-    mtrType_Id: "กล้อง",
-
-  },
-];
+import {
+  GetMaterialService,
+  InsertMaterialService,
+  UpdateMaterialService,
+} from "@/services/material.service";
+import { useContext } from "react";
+import MyContext from "@/context/MyContext";
+import { SectionReqDialog } from "./sections/SectionReqDialog";
+import { PrivateRouteList } from "@/guard/PrivateRouteList";
+import { InsertMtrReqService } from "@/services/material-requisition.service";
+import Swal from "sweetalert2";
+import { OSPagination } from "@/components/OSPagination";
+import { PrivateRoute } from "@/guard/PrivateRoute";
+// const authorsTableData = [
+//   {
+//     material_Id: "1",
+//     material_Code: "M-001",
+//     material_Image: "",
+//     material_Name: "Sony Alpha a7 IV (ILCE-7M4)",
+//     material_Detail:
+//       "เป็นกล้องมิเรอร์เลส Full-Frame ไฮบริดรุ่นยอดนิยม ความละเอียด 33MP ชิปประมวลผล BIONZ XR โฟกัสรวดเร็วแม่นยำ (Real-time Eye AF) ถ่ายวิดีโอสูงสุด 4K 60p 10-bit 4:2:2 พร้อมจอพับ Vari-angle และระบบกันสั่น 5 แกน (5.5EV) เหมาะสำหรับทั้งภาพนิ่งและวิดีโอระดับมืออาชีพ ",
+//     material_Price: "25000",
+//     material_Stock: "5",
+//     material_Position: "คลังสื่อ ชั้น 2 ห้อง 204",
+//     material_CreationDate: "02/02/2569",
+//     mtrType_Id: "กล้อง",
+//   },
+//   {
+//     material_Id: "2",
+//     material_Code: "M-002",
+//     material_Image:
+//       "https://images.unsplash.com/photo-1606986628470-26a67fa4730c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+//     material_Name: "Sony Alpha a7 IV (ILCE-7M4)",
+//     material_Detail:
+//       "เป็นกล้องมิเรอร์เลส Full-Frame ไฮบริดรุ่นยอดนิยม ความละเอียด 33MP ชิปประมวลผล BIONZ XR โฟกัสรวดเร็วแม่นยำ (Real-time Eye AF) ถ่ายวิดีโอสูงสุด 4K 60p 10-bit 4:2:2 พร้อมจอพับ Vari-angle และระบบกันสั่น 5 แกน (5.5EV) เหมาะสำหรับทั้งภาพนิ่งและวิดีโอระดับมืออาชีพ ",
+//     material_Price: "25000",
+//     material_Stock: "5",
+//     material_Position: "คลังสื่อ ชั้น 2 ห้อง 204",
+//     material_CreationDate: "02/02/2569",
+//     mtrType_Id: "กล้อง",
+//   },
+//   {
+//     material_Id: "3",
+//     material_Code: "M-003",
+//     material_Image:
+//       "https://images.unsplash.com/photo-1606986628470-26a67fa4730c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+//     material_Name: "Sony Alpha a7 IV (ILCE-7M4)",
+//     material_Detail:
+//       "เป็นกล้องมิเรอร์เลส Full-Frame ไฮบริดรุ่นยอดนิยม ความละเอียด 33MP ชิปประมวลผล BIONZ XR โฟกัสรวดเร็วแม่นยำ (Real-time Eye AF) ถ่ายวิดีโอสูงสุด 4K 60p 10-bit 4:2:2 พร้อมจอพับ Vari-angle และระบบกันสั่น 5 แกน (5.5EV) เหมาะสำหรับทั้งภาพนิ่งและวิดีโอระดับมืออาชีพ ",
+//     material_Price: "25000",
+//     material_Stock: "5",
+//     material_Position: "คลังสื่อ ชั้น 2 ห้อง 204",
+//     material_CreationDate: "02/02/2569",
+//     mtrType_Id: "กล้อง",
+//   },
+//   {
+//     material_Id: "4",
+//     material_Code: "M-004",
+//     material_Image:
+//       "https://images.unsplash.com/photo-1510127034890-ba27508e9f1c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+//     material_Name: "Sony Alpha a7 IV (ILCE-7M4)",
+//     material_Detail:
+//       "เป็นกล้องมิเรอร์เลส Full-Frame ไฮบริดรุ่นยอดนิยม ความละเอียด 33MP ชิปประมวลผล BIONZ XR โฟกัสรวดเร็วแม่นยำ (Real-time Eye AF) ถ่ายวิดีโอสูงสุด 4K 60p 10-bit 4:2:2 พร้อมจอพับ Vari-angle และระบบกันสั่น 5 แกน (5.5EV) เหมาะสำหรับทั้งภาพนิ่งและวิดีโอระดับมืออาชีพ ",
+//     material_Price: "25000",
+//     material_Stock: "0",
+//     material_Position: "คลังสื่อ ชั้น 2 ห้อง 204",
+//     material_CreationDate: "02/02/2569",
+//     mtrType_Id: "กล้อง",
+//   },
+//   {
+//     material_Id: "5",
+//     material_Code: "M-005",
+//     material_Image:
+//       "https://images.unsplash.com/photo-1510127034890-ba27508e9f1c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+//     material_Name: "Sony Alpha a7 IV (ILCE-7M4)",
+//     material_Detail:
+//       "เป็นกล้องมิเรอร์เลส Full-Frame ไฮบริดรุ่นยอดนิยม ความละเอียด 33MP ชิปประมวลผล BIONZ XR โฟกัสรวดเร็วแม่นยำ (Real-time Eye AF) ถ่ายวิดีโอสูงสุด 4K 60p 10-bit 4:2:2 พร้อมจอพับ Vari-angle และระบบกันสั่น 5 แกน (5.5EV) เหมาะสำหรับทั้งภาพนิ่งและวิดีโอระดับมืออาชีพ ",
+//     material_Price: "25000",
+//     material_Stock: "0",
+//     material_Position: "คลังสื่อ ชั้น 2 ห้อง 204",
+//     material_CreationDate: "02/02/2569",
+//     mtrType_Id: "กล้อง",
+//   },
+//   {
+//     material_Id: "6",
+//     material_Code: "M-006",
+//     material_Image:
+//       "https://images.unsplash.com/photo-1510127034890-ba27508e9f1c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+//     material_Name: "Sony Alpha a7 IV (ILCE-7M4)",
+//     material_Detail:
+//       "เป็นกล้องมิเรอร์เลส Full-Frame ไฮบริดรุ่นยอดนิยม ความละเอียด 33MP ชิปประมวลผล BIONZ XR โฟกัสรวดเร็วแม่นยำ (Real-time Eye AF) ถ่ายวิดีโอสูงสุด 4K 60p 10-bit 4:2:2 พร้อมจอพับ Vari-angle และระบบกันสั่น 5 แกน (5.5EV) เหมาะสำหรับทั้งภาพนิ่งและวิดีโอระดับมืออาชีพ ",
+//     material_Price: "25000",
+//     material_Stock: "0",
+//     material_Position: "คลังสื่อ ชั้น 2 ห้อง 204",
+//     material_CreationDate: "02/02/2569",
+//     mtrType_Id: "กล้อง",
+//   },
+// ];
 
 export function MaterialForm() {
+  const { dataEmp, setLoader } = useContext(MyContext);
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
-  const [action, setAction] = useState("")
-  const [itemMtr, setMtrItem] = useState(null)
 
-  const handleOpen = (text,item) => {
+  const [itemReq, setItemReq] = useState();
+  const [action, setAction] = useState("insert" || "update");
+  const [itemMtr, setMtrItem] = useState(null);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalCount, setTotalCount] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [materials, setMaterials] = useState([]);
+  const [fileBase64, setFileBase64] = useState("");
+  const [imgFile, setImgFile] = useState(null);
+
+  useEffect(() => {
+    fetchData();
+  }, [page, pageSize, dataEmp]);
+
+  const fetchData = async () => {
+    setLoader(true);
+    if (dataEmp) {
+      const resp = await GetMaterialService(
+        page,
+        pageSize,
+        dataEmp.role_id,
+        dataEmp.dpm_id,
+      );
+      if (resp) {
+        setPage(resp.page || 1);
+        setPageSize(resp.pageSize || 10);
+        setTotalPages(resp.totalPages);
+        setTotalCount(resp.total);
+        setMaterials(resp.data);
+      } else {
+      }
+    }
+
+    setLoader(false);
+  };
+
+  const onPageChange = async (e) => {
+    const selected = e.selected;
+    setPage(selected + 1);
+  };
+
+  const handleChangePageSize = async (number) => {
+    setPageSize(number);
+  };
+
+  const handleOpen = (text, item) => {
     setAction(text);
-    setOpen(true);
-    setMtrItem(item)
+    //setOpen(true);
+    setMtrItem(item);
   };
 
   const handleClose = () => {
-    setOpen(false)
-    setMtrItem(null)
-  }
+    //setOpen(false);
+    setMtrItem(null);
+    setFileBase64("");
+    setImgFile(null);
+  };
+
+  const handleOpenReq = (item) => {
+    setItemReq(item);
+    //setOpenReq(true);
+  };
+
+  const handleCloseReq = () => {
+    setItemReq(null);
+    //setOpenReq(false);
+  };
+
+  const handleUploadImg = async (file) => {
+    const reader = new FileReader();
+    setImgFile(file);
+    setFileBase64("");
+    reader.onloadend = async () => {
+      const base64 = reader.result.split(",")[1];
+      setFileBase64(base64);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const onSubmitMaterial = async (value) => {
+    console.log("imgFile:", imgFile);
+    //setOpen(false);
+    setMtrItem(null);
+    const mimeType = imgFile ? imgFile.type : "";
+    const fileName = imgFile ? imgFile.name : "";
+    setLoader(true);
+    if (action === "insert") {
+      const material_Image = fileBase64 ? fileBase64 : value.material_Image;
+      const newValue = { ...value, mimeType, fileName, material_Image };
+      const resp = await InsertMaterialService(newValue);
+      //console.log("resp", resp);
+
+      if (resp && resp.status === "200") {
+        setFileBase64("");
+        setImgFile(null);
+        fetchData();
+      }
+    } else if (action === "update") {
+      const material_NewImage = fileBase64 ? fileBase64 : "";
+      const newValue = {
+        ...value,
+        mimeType: mimeType,
+        fileName: fileName,
+        material_NewImage: material_NewImage,
+      };
+      const resp = await UpdateMaterialService(newValue);
+      if (resp && resp.status === "200") {
+        setFileBase64("");
+        setImgFile(null);
+        fetchData();
+      }
+    }
+    setLoader(false);
+  };
+
+  const onSubmitReqMaterial = async (value) => {
+    handleCloseReq();
+    setLoader(true);
+    const resp = await InsertMtrReqService(value);
+    if (resp && resp.status === "200") {
+      fetchData();
+      Swal.fire({
+        title: "เบิกสำเร็จ?",
+        text: "คลิ๊กตกลงเพื่อไปยังหน้ารายการเบิก",
+        icon: "success",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "ตกลง",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate("/dashboard/req-material");
+        }
+      });
+    }
+    setLoader(false);
+  };
 
   return (
     <>
-      <div className="mt-12 mb-8 flex flex-col gap-12">
+      <div className="mt-12 mb-8 flex flex-col gap-12 min-h-[65vh]">
         <div className="flex flex-row justify-between">
           <Typography variant="h6" color="blue-gray">
             จัดการคลังสื่อฯ (Inventory)
           </Typography>
-          <Button
-            variant="gradient"
-            color="blue"
-            className="flex items-center justify-center gap-2"
-            onClick={()=> handleOpen("insert",null)}
+          <PrivateRoute
+            rolePrimary={dataEmp && dataEmp.role_id}
+            rolesTrial={"R01"}
           >
-            <PlusCircleIcon className="w-5 h-5" />
-            <p>เพื่มสื่อใหม่</p>
-          </Button>
+            <Button
+              variant="gradient"
+              color="blue"
+              className="flex items-center justify-center gap-2"
+              onClick={() => handleOpen("insert", null)}
+            >
+              <PlusCircleIcon className="w-5 h-5" />
+              <p>เพื่มสื่อใหม่</p>
+            </Button>
+          </PrivateRoute>
         </div>
-        <SectionFormCard data={authorsTableData}  handleOpen={handleOpen}/>
+        <SectionFormCard
+          data={materials}
+          employee={dataEmp ? dataEmp : null}
+          handleOpen={handleOpen}
+          handleOpenReq={handleOpenReq}
+        />
+        <div className="w-full">
+          {totalCount > 0 && (
+            <OSPagination
+              total={totalCount}
+              pageCount={totalPages}
+              page={page}
+              pageSize={pageSize}
+              onPageChange={onPageChange}
+              handleChangePageSize={handleChangePageSize}
+            />
+          )}
+        </div>
       </div>
-
-      <SectionFormDialogInUp open={open} handleClose={handleClose} value={itemMtr ? itemMtr : null} action={action}/>
+      <SectionReqDialog
+        open={itemReq ? true : false}
+        value={itemReq ? itemReq : null}
+        employee={dataEmp ? dataEmp : null}
+        onSubmitReqMaterial={onSubmitReqMaterial}
+        handleCloseReq={handleCloseReq}
+      />
+      <SectionFormDialogInUp
+        employee={dataEmp ? dataEmp : null}
+        open={itemMtr ? true : false}
+        value={itemMtr ? itemMtr : null}
+        action={action}
+        imgFile={imgFile}
+        handleClose={handleClose}
+        handleUploadImg={handleUploadImg}
+        onSubmitMaterial={onSubmitMaterial}
+      />
     </>
   );
 }

@@ -9,8 +9,8 @@ import { Home } from "@/pages/dashboard";
 import { SignIn, SignUp } from "@/pages/auth";
 import { EmployeeInsert, EmployeeTable, EmployeeUpdate } from "./pages/employee";
 import { JobInsert, JobTable, JobUpdate } from "./pages/job";
-import { MaterialTeble,MaterialForm, MaterialNotifyTeble, MaterialNotifyInUp } from "./pages/material";
-import { DocumentChartBarIcon } from "@heroicons/react/24/outline";
+import { MaterialTeble,MaterialForm, MaterialReqTeble, MaterialReqInUp } from "./pages/material";
+import { ArchiveBoxIcon, DocumentChartBarIcon } from "@heroicons/react/24/outline";
 
 
 const icon = {
@@ -77,54 +77,30 @@ export const routes = [
           },
         ],
       },
-      // {
-      //   icon: <DocumentChartBarIcon {...icon} />,
-      //   name: "เบิกสื่อ",
-      //   path: "/material/table-material",
-      //   element: <MaterialTeble />,
-      //   show: true,
-      //   layout2:'material',
-      //   pages2:[
-      //     {
-      //       icon2: <TableCellsIcon {...icon} />,
-      //       name2: "แจ้งเบิกสื่อ",
-      //       path2: "material/notify-material",
-      //       element2: <MaterialNotifyTeble />,
-      //       show2: true,
-      //     },
-      //     {
-      //       icon2: <TableCellsIcon {...icon} />,
-      //       name2: "จัดการคลังสื่อ",
-      //       path2: "/form-material",
-      //       element2: <MaterialForm />,
-      //       show2: true,
-      //     },
-      //   ]
-      // },      
-      // {
-      //   icon: <DocumentChartBarIcon {...icon} />,
-      //   name: "จัดการคลังสื่อ",
-      //   path: "/form-material",
-      //   element: <MaterialForm />,
-      //   show:false,
-      // }
-      //,      
-      // {
-      //   icon: <DocumentChartBarIcon {...icon} />,
-      //   name: "แจ้งเบิกสื่อ",
-      //   path: "/notify-material",
-      //   element: <MaterialNotifyTeble />,
-      //   show:false,
-      //   pages2: [
-      //     {
-      //       icon2: <TableCellsIcon {...icon} />,
-      //       name2: "เบิกสื่อ",
-      //       path2: "/notify-material/insert",
-      //       element2: <MaterialNotifyInUp />,
-      //       show2: false,
-      //     }
-      //   ],
-      // }
+      {
+        icon: <DocumentChartBarIcon {...icon} />,
+        name: "รายการเบิกสื่อ",
+        path: "/req-material",
+        element: <MaterialReqTeble />,
+        show: true,
+        layout2:'material',
+        pages2:[        
+          // {
+          //   icon2: <DocumentChartBarIcon {...icon} />,
+          //   name2: "แจ้งเบิกสื่อ",
+          //   path2: "/req-material/insert",
+          //   element2: <MaterialReqInUp />,
+          //   show2: false,
+          // },
+          {
+            icon2: <ArchiveBoxIcon {...icon} />,
+            name2: "คลังสื่อ",
+            path2: "/form-material",
+            element2: <MaterialForm />,
+            show2: true,
+          },
+        ]
+      },
     ]
   },
     {
@@ -162,6 +138,30 @@ export const routes = [
             show2: false,
           },
         ],
+      },
+        {
+        icon: <DocumentChartBarIcon {...icon} />,
+        name: "รายการเบิกสื่อ",
+        path: "/req-material",
+        element: <MaterialReqTeble />,
+        show: true,
+        layout2:'material',
+        pages2:[        
+          // {
+          //   icon2: <DocumentChartBarIcon {...icon} />,
+          //   name2: "แจ้งเบิกสื่อ",
+          //   path2: "/req-material/insert",
+          //   element2: <MaterialReqInUp />,
+          //   show2: false,
+          // },
+          {
+            icon2: <ArchiveBoxIcon {...icon} />,
+            name2: "คลังสื่อ",
+            path2: "/form-material",
+            element2: <MaterialForm />,
+            show2: true,
+          },
+        ]
       },
     ],
   },
@@ -201,12 +201,30 @@ export const routes = [
           },
         ],
       },
-      // {
-      //   icon: <TableCellsIcon {...icon} />,
-      //   name: "แจ้งเบิกสื่อ",
-      //   path: "/material",
-      //   element: <MaterialTeble />,
-      // }
+      {
+        icon: <DocumentChartBarIcon {...icon} />,
+        name: "รายการเบิกสื่อ",
+        path: "/req-material",
+        element: <MaterialReqTeble />,
+        show: true,
+        layout2:'material',
+        pages2:[        
+          // {
+          //   icon2: <DocumentChartBarIcon {...icon} />,
+          //   name2: "แจ้งเบิกสื่อ",
+          //   path2: "/req-material/insert",
+          //   element2: <MaterialReqInUp />,
+          //   show2: false,
+          // },
+          {
+            icon2: <ArchiveBoxIcon {...icon} />,
+            name2: "คลังสื่อ",
+            path2: "/form-material",
+            element2: <MaterialForm />,
+            show2: true,
+          },
+        ]
+      },
     ],
   },
   {

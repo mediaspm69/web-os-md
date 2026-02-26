@@ -12,6 +12,9 @@ export const dpmService = {
   DPM_URL: `https://script.google.com/macros/s/${import.meta.env.VITE_DEPARTMENT_BEARERTOKEN}/exec`,
 };
 
+export const mtrService = {
+  MTR_URL: `https://script.google.com/macros/s/${import.meta.env.VITE_MATERIAL_BEARERTOKEN}/exec`,
+};
 
 export const removeAllStorage = async () => {
   let keys = ["empId","empCode","empUsername","empRole"];

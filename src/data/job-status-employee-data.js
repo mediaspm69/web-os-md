@@ -1,6 +1,6 @@
 //id : ไอดี
-//js_id : ส่งสถานะ
 //status_id : รับสถานะ
+//js_id : ส่งสถานะ
 //name : ชื่อสถานะ
 //color :   สีสถานะ
 export const jobStaEmp = [

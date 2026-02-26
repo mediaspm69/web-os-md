@@ -42,7 +42,7 @@ import MyContext from "@/context/MyContext";
 import Swal from "sweetalert2";
 
 import { toThaiDateTimeString } from "@/helpers/format";
-import { jobIsShowData, jobStaEmp, jobStaManager, jsData } from "@/data";
+import { isShowData, jobStaEmp, jobStaManager, jsData } from "@/data";
 import { JobHsitoryTimeline } from "./sections/JobHsitoryTimeline";
 import { Form, Formik } from "formik";
 import { format } from "date-fns";
@@ -80,7 +80,7 @@ export function JobTable() {
   useEffect(() => {
     const intervalId = setInterval(fetchRealTimeData, 10000); // Fetch every 10 seconds
     return () => clearInterval(intervalId);
-  }, [page, pageSize, dataEmp]);
+  }, [page, pageSize, dataEmp,seas]);
 
   const fetchData = async () => {
     setLoader(true);
@@ -109,12 +109,15 @@ export function JobTable() {
         pageSize,
         dataEmp.dpm_id,
         dataEmp.role_id,
+        seas
       );
+
       if (res) {
         setJobs(res);
       } else {
         setJobs({ page: 1, pageSize: 10, total: 0, totalPages: 1 });
       }
+      setLoader(false);
     }
   };
 
@@ -193,7 +196,7 @@ export function JobTable() {
 
   const handleJobIsShowData = (isShow) => {
     if (isShow) {
-      const sta = jobIsShowData.find((fd) => fd?.status === isShow);
+      const sta = isShowData.find((fd) => fd?.status === isShow);
       if (sta) {
         return <LightBulbIcon color={sta?.color} className={`w-5 h-5 `} />;
       }
@@ -350,7 +353,7 @@ export function JobTable() {
             <Formik
               enableReinitialize
               initialValues={{
-                employee_Id:  "",
+                employee_Id: "",
                 jobStatus_Id: "",
                 days: [],
               }}
@@ -880,9 +883,10 @@ export function JobTable() {
                           )}
                         </div>
                       </div>
-                      {values.job_file && (
-                        <div className="flex justify-end ">
-                          <div className="flex gap-2">
+                      <div className="flex justify-end">
+                        {values.job_file ? (
+                          <div className="flex items-center gap-2">
+                            ลิงก์รูปภาพ
                             <a
                               className="w-fit text-green-500"
                               href={values.job_file}
@@ -894,8 +898,10 @@ export function JobTable() {
                               </IconButton>
                             </a>
                           </div>
-                        </div>
-                      )}
+                        ) : (
+                          <Typography>ไม่พบลิงก์รูปภาพ</Typography>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <div className="w-full px-6">

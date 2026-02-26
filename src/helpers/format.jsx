@@ -43,12 +43,13 @@ export const toThaiDateString = (date) => {
 //------------------------------------
 //GoogleDrive
 //------------------------------------
-  const convertDriveImage = (url) => {
+ export const convertDriveImage = (url) => {
     //ConvertDriveLinkToDirectImage
     const match = url.match(/\/d\/([a-zA-Z0-9_-]+)\//);
     if (match && match[1]) {
       const fileId = match[1];
       return `https://lh3.googleusercontent.com/d/${fileId}`;
+      //return `https://drive.google.com/uc?id=${fileId}`;
     }
     return ""; // or handle invalid format
   };
@@ -65,9 +66,9 @@ export const toThaiDateString = (date) => {
 //-----------------------------------------------------------------------------------------
 //number
 //-----------------------------------------------------------------------------------------
-export const currencyFormat = (num)=> {
-    return num?.toFixed(2)?.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
-}
+export const currencyFormat = (num) => {
+  return num ? num?.toFixed(2)?.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") : "0";
+};
 //-----------------------------------------------------------------------------------------
 //word
 //-----------------------------------------------------------------------------------------
@@ -95,3 +96,5 @@ export const inputEnglishUppercase = (value) => {
 export const inputNumber = (value) => {
   return value.replace(/[^0-9']/g, '') 
 }
+
+

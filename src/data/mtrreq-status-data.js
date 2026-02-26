@@ -1,29 +1,39 @@
-export const mtrReqStaData = [
+export const mrsData = [
   {
     id: "S01",
     name: "รอรับเบิก",
-    color: "blue"
+    color: "blue",
   },
   {
     id: "S02",
     name: "รอจัดเตรียม",
-    color: "yellow"
+    color: "yellow",
   },
   {
     id: "S03",
     name: "พร้อมเข้ารับ",
-    color: "light-blue"
+    color: "light-blue",
   },
   {
     id: "S04",
     name: "เข้ารับสำเร็จ",
-    color: "green"
+    color: "green",
   },
   {
     id: "S05",
-    name: "ยกเลิกเบิกสื่อ",
-    color: "red"
-  }
+    name: "ยกเลิกเบิก",
+    color: "red",
+  },
+  {
+    id: "S06",
+    name: "ไม่รับเบิก",
+    color: "red",
+  },
+  {
+    id: "S07",
+    name: "ไม่สำเร็จ",
+    color: "red",
+  },
 ];
 
-export default mtrReqStaData;
+export default mrsData;

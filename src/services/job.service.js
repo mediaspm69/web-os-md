@@ -151,9 +151,9 @@ export const ReportStatusListService = async (role_Id,department_Id) => {
   }
 };
 
-export const ReportHistoryTimeService = async () => {
+export const ReportHistoryTimeService = async (role_Id,department_Id) => {
   try {
-    const body = JSON.stringify({ action: "reporthistorytime" });
+    const body = JSON.stringify({ action: "reporthistorytime",role_Id,department_Id});
     const resp = await axios.post(jobService.JOB_URL, body);
     let json = await resp.data;
     if (json && json.success) {

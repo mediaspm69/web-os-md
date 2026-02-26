@@ -1,20 +1,44 @@
+import { PrivateRoute } from "@/guard/PrivateRoute";
+import { PrivateRouteList } from "@/guard/PrivateRouteList";
+import { convertDriveImage } from "@/helpers/format";
+import { LinkIcon } from "@heroicons/react/24/outline";
 import { MapPinIcon } from "@heroicons/react/24/solid";
-import { Button, Card, CardBody, CardHeader, Chip, Typography } from "@material-tailwind/react";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Chip,
+  IconButton,
+  Typography,
+} from "@material-tailwind/react";
 import React from "react";
 
-export const SectionFormCard = ({ data = [] ,handleOpen = ()=> {}}) => {
+export const SectionFormCard = ({
+  employee = null,
+  data = [],
+  handleOpen = () => {},
+  handleOpenReq = () => {},
+}) => {
   return (
     <div className="grid lg:grid-cols-3  sm:grid-cols-2 grid-cols-1 gap-2">
       {data &&
         data.length > 0 &&
-        data.map(
-          (
-            itemMtr,
-            index,
-          ) => 
-          {
-         const { material_Code, material_Name, material_Amount, material_Image, material_Detail, material_Price, material_Position, mtrType_Id } = itemMtr
-            return (
+        data.map((itemMtr, index) => {
+          const {
+            material_Code,
+            material_Name,
+            material_Stock,
+            material_Image,
+            material_Detail,
+            material_Price,
+            material_Position,
+            mtrType_Id,
+            employee_Id,
+          } = itemMtr;
+          const image = convertDriveImage(material_Image || "");
+          const amount = parseInt(material_Stock || 0);
+          return (
             <Card key={index} className="max-w-[24rem] overflow-hidden">
               <CardHeader
                 floated={false}
@@ -22,17 +46,39 @@ export const SectionFormCard = ({ data = [] ,handleOpen = ()=> {}}) => {
                 color="transparent"
                 className="m-0 rounded-none"
               >
-                <img src={material_Image} alt={material_Name}/>
+                {image ? (
+                  <img
+                    src={image}
+                    alt={material_Code}
+                    className="w-full object-cover h-60"
+                  />
+                ) : (
+                  <div className="h-60"></div>
+                )}
               </CardHeader>
               <CardBody className="flex flex-col gap-1">
                 <div className="flex flex-row  justify-between">
-                  <Chip variant="outlined" value={material_Code || "ไม่พบรหัส"} />
+                  <div className="flex gap-2">
+                    <Chip
+                      variant="outlined"
+                      value={material_Code || "ไม่พบรหัส"}
+                    />
+                    <a
+                      className="w-fit text-green-500"
+                      href={material_Image}
+                      download="proposed_file_name"
+                      target="_blank"
+                    >
+                      <IconButton variant="outlined" color="green" size="md">
+                        <LinkIcon className="w-5" />
+                      </IconButton>
+                    </a>
+                  </div>
+
                   <Chip
                     variant="gradient"
-                    color={parseInt(material_Amount || 0) > 0 ? "green" : "red"}
-                    value={
-                      parseInt(material_Amount || 0) > 0 ? "In Stock" : "Out of Stock"
-                    }
+                    color={amount > 0 ? "green" : "red"}
+                    value={amount > 0 ? "In Stock" : "Out of Stock"}
                     className="py-0.5 px-2 text-[11px] font-medium w-fit"
                   />
                 </div>
@@ -48,29 +94,65 @@ export const SectionFormCard = ({ data = [] ,handleOpen = ()=> {}}) => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <Typography
-                      color={parseInt(material_Amount || 0) > 0 ? "green" : "red"}
+                      color={amount > 0 ? "green" : "red"}
                       className="font-medium text-sm"
                     >
                       <span className="text-black">คงเหลือ: </span>
-                      {`${material_Amount}`}
+                      {`${amount}`}
                     </Typography>
                   </div>
-                  <Button
-                    onClick={()=> handleOpen('update',itemMtr)}
-                    variant="text"
-                    size="md"
-                    color="yellow"
-                    className="font-medium text-sm"
-                  >
-                    แก้ไขข้อมูล
-                  </Button>
+                  <div className="flex">
+                    <PrivateRoute
+                      rolePrimary={"R01"}
+                      rolesTrial={employee && employee.role_id}
+                    >
+                      <PrivateRoute
+                        rolePrimary={employee && employee.id}
+                        rolesTrial={employee_Id}
+                      >
+                        <div className="flex">
+                          <Button
+                            onClick={() => handleOpen("update", itemMtr)}
+                            variant="text"
+                            size="md"
+                            color="yellow"
+                            className="font-medium text-sm"
+                          >
+                            แก้ไขข้อมูล
+                          </Button>
+                        </div>
+                      </PrivateRoute>
+                    </PrivateRoute>
+                    <PrivateRoute
+                      rolePrimary={"R02"}
+                      rolesTrial={employee && employee.role_id}
+                    >
+                      <Button
+                        disabled={Boolean(amount <= 0)}
+                        onClick={() => handleOpenReq(itemMtr)}
+                        variant="text"
+                        size="md"
+                        color="blue"
+                        className="font-medium text-sm"
+                      >
+                        แจ้งเบิกสื่อ
+                      </Button>
+                    </PrivateRoute>
+                    <Button
+                      onClick={() => handleOpen("detail", itemMtr)}
+                      variant="text"
+                      size="md"
+                      color="teal"
+                      className="font-medium text-sm"
+                    >
+                      รายละเอียด
+                    </Button>
+                  </div>
                 </div>
               </CardBody>
             </Card>
-          )
-          }
-           
-        )}
+          );
+        })}
     </div>
   );
 };

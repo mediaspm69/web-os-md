@@ -41,7 +41,7 @@ export const SectionFormTable = ({ data = [] }) => {
                     {
                       material_Image,
                       material_Name,
-                      material_Amount,
+                      material_Stock,
                       material_Price,
                       material_Position,
                       material_CreationDate,
@@ -79,9 +79,9 @@ export const SectionFormTable = ({ data = [] }) => {
                           <Chip
                             variant="gradient"
                             color={
-                              parseInt(material_Amount) > 0 ? "green" : "red"
+                              parseInt(material_Stock) > 0 ? "green" : "red"
                             }
-                            value={material_Amount}
+                            value={material_Stock}
                             className="py-0.5 px-2 text-[11px] font-medium w-fit"
                           />
                         </td>

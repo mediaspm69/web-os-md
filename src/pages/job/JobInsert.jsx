@@ -287,7 +287,7 @@ export const JobInsert = () => {
                     สั่งงานแผนก <span className="text-red-500">*</span>
                   </Typography>
                   <select
-                    disabled
+                    
                     className={`
                      w-full 
                      bg-transparent 
@@ -325,7 +325,7 @@ export const JobInsert = () => {
                     <option value="">None</option>
                     {dpms &&
                       dpms.length > 0 &&
-                      dpms.map(({ department_Id, department_Name }, index) => (
+                      dpms.filter((ft)=> ft.jobDpm_IsShow === "on").map(({ department_Id, department_Name }, index) => (
                         <option value={department_Id} key={index}>
                           {department_Name}
                         </option>

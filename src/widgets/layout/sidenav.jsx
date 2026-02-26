@@ -141,7 +141,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
                                 </Button>
                               )}
                             </NavLink>
-                            {pages2.map(({ icon2, name2, path2 }) => (
+                            {pages2.filter((ft)=> ft.show2 === true).map(({ icon2, name2, path2 }) => (
                               <div key={name2}>
                                 <NavLink to={`/${layout}${path2}`}>
                                   {({ isActive }) => (
@@ -171,10 +171,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
                             ))}
                           </div>
                         </AccordionBody>
-                      </Accordion>
-               
-                 
-                 
+                      </Accordion>                                         
                     </li>
                   );
                 } else if (show === false) {

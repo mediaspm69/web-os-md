@@ -52,7 +52,7 @@ export function Home() {
   };
 
   const fetchDataStatus = async () => {
-    if (dataEmp && dataEmp.role_id && dataEmp.dpm_id) {
+    if (dataEmp) {
       const resp = await ReportStatusListService(
         dataEmp.role_id,
         dataEmp.dpm_id,
@@ -66,16 +66,21 @@ export function Home() {
   };
 
   const fetchDataHistoryTime = async () => {
-    const resp = await ReportHistoryTimeService();
-    if (resp) {
-      setHisTime(resp);
-    } else {
-      setHisTime({ day: 0, hours: 0, minutes: 0 });
+    if (dataEmp) {
+      const resp = await ReportHistoryTimeService(
+        dataEmp.role_id,
+        dataEmp.dpm_id,
+      );
+      if (resp) {
+        setHisTime(resp);
+      } else {
+        setHisTime({ day: 0, hours: 0, minutes: 0,totalCount: 0, });
+      }
     }
   };
 
   const fetchDataChartJob = async () => {
-    if (dataEmp && dataEmp.role_id && dataEmp.dpm_id) {
+    if (dataEmp) {
       const resp = await ReportChartJobsService(
         yearJobs ? yearJobs : year,
         dataEmp.role_id,
@@ -222,7 +227,7 @@ export function Home() {
         >
           {hisTime && (
             <StatisticsCard
-              value={`${hisTime.totalCount}`}
+              value={`${hisTime.totalCount || "ไม่พบข้อมูล"}`}
               title={"งานทั้งหมด"}
             />
           )}
@@ -252,7 +257,7 @@ export function Home() {
         >
           {hisTime && (
             <StatisticsCard
-              value={` ${hisTime.days} วัน ${hisTime.hours} ชั่วโมง ${hisTime.minutes} นาที`}
+              value={` ${hisTime.days || "0"} วัน ${hisTime.hours || "0"} ชั่วโมง ${hisTime.minutes || "0"} นาที`}
               title={"ระยะเวลา (เฉลี่ย)"}
             />
           )}
