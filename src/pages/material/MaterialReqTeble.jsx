@@ -1,116 +1,42 @@
-import { PlusCircleIcon } from "@heroicons/react/24/outline";
-import { Typography, Button } from "@material-tailwind/react";
-import { useNavigate } from "react-router-dom";
-import { SectionReqTable } from "./sections/SectionReqTable";
 import { useContext, useEffect, useState } from "react";
+import { Typography } from "@material-tailwind/react";
+//sections
+import { SectionDialogReqUp } from "./sections/SectionReqDialogUp";
+import { SectionReqTable } from "./sections/SectionReqTable";
+//services
 import {
   GetMRHistoryService,
   GetMtrReqService,
   UpdateMtrReqService,
   UpdateMtrReqStatusService,
 } from "@/services/material-requisition.service";
-import MyContext from "@/context/MyContext";
-import { SectionDialogReqUp } from "./sections/SectionReqDialogUp";
 import { GetByIdMaterialService } from "@/services/material.service";
+//context
+import MyContext from "@/context/MyContext";
+//components
 import { OSPagination } from "@/components/OSPagination";
-//sections
 
-const authorsTableData = [
-  {
-    mtrReq_Id: "1",
-    mtrReq_Code: "REQ-1001",
-    mtrReq_Amount: "5",
-    mtrReq_TotalPrice: "125000",
-    mtrReq_DateStart: "09/2/2569",
-    mtrReq_DateEnd: "10/2/2569",
-    mtrReqStatus_Id: "S01",
-    material_Id: "1",
-    material_Code: "M-001",
-    material_Name: "Sony Alpha a7 IV (ILCE-7M4)",
-    material_Position: "คลังสื่อ ชั้น 2 ห้อง 204",
-    material_Price: "25000",
-    employee_FirstName: "คุณมะม่วง",
-  },
-  {
-    mtrReq_Id: "2",
-    mtrReq_Code: "REQ-1002",
-    mtrReq_Amount: "5",
-    mtrReq_TotalPrice: "125000",
-    mtrReq_DateStart: "09/2/2569",
-    mtrReq_DateEnd: "10/2/2569",
-    mtrReqStatus_Id: "S01",
-    material_Id: "1",
-    material_Code: "M-001",
-    material_Name: "Sony Alpha a7 IV (ILCE-7M4)",
-    material_Position: "คลังสื่อ ชั้น 2 ห้อง 204",
-    material_Price: "25000",
-    employee_FirstName: "คุณมะม่วง",
-  },
-  {
-    mtrReq_Id: "3",
-    mtrReq_Code: "REQ-1003",
-    mtrReq_Amount: "5",
-    mtrReq_TotalPrice: "125000",
-    mtrReq_DateStart: "09/2/2569",
-    mtrReq_DateEnd: "10/2/2569",
-    mtrReqStatus_Id: "S04",
-    material_Id: "1",
-    material_Code: "M-001",
-    material_Name: "Sony Alpha a7 IV (ILCE-7M4)",
-    material_Position: "คลังสื่อ ชั้น 2 ห้อง 204",
-    material_Price: "25000",
-    employee_FirstName: "คุณมะม่วง",
-  },
-  {
-    mtrReq_Id: "4",
-    mtrReq_Code: "REQ-1004",
-    mtrReq_Amount: "5",
-    mtrReq_TotalPrice: "125000",
-    mtrReq_DateStart: "09/2/2569",
-    mtrReq_DateEnd: "10/2/2569",
-    material_Id: "1",
-    material_Code: "M-001",
-    material_Name: "Sony Alpha a7 IV (ILCE-7M4)",
-    mtrReqStatus_Id: "S03",
-    material_Position: "คลังสื่อ ชั้น 2 ห้อง 204",
-    material_Price: "25000",
-    employee_FirstName: "คุณมะม่วง",
-  },
-  {
-    mtrReq_Id: "5",
-    mtrReq_Code: "REQ-1005",
-    mtrReq_Amount: "5",
-    mtrReq_TotalPrice: "125000",
-    mtrReq_DateStart: "09/2/2569",
-    mtrReq_DateEnd: "10/2/2569",
-    mtrReqStatus_Id: "S02",
-    material_Id: "1",
-    material_Code: "M-001",
-    material_Name: "Sony Alpha a7 IV (ILCE-7M4)",
-    material_Position: "คลังสื่อ ชั้น 2 ห้อง 204",
-    material_Price: "25000",
-    employee_FirstName: "คุณมะม่วง",
-  },
-  {
-    mtrReq_Id: "6",
-    mtrReq_Code: "REQ-1006",
-    mtrReq_Amount: "5",
-    mtrReq_TotalPrice: "125000",
-    mtrReq_DateStart: "09/2/2569",
-    mtrReq_DateEnd: "10/2/2569",
-    mtrReqStatus_Id: "S01",
-    material_Id: "1",
-    material_Code: "M-001",
-    material_Name: "Sony Alpha a7 IV (ILCE-7M4)",
-    material_Position: "คลังสื่อ ชั้น 2 ห้อง 204",
-    material_Price: "25000",
-    employee_FirstName: "คุณมะม่วง",
-  },
-];
+// const authorsTableData = [
+//   {
+//     mtrReq_Id: "1",
+//     mtrReq_Code: "REQ-1001",
+//     mtrReq_Amount: "5",
+//     mtrReq_TotalPrice: "125000",
+//     mtrReq_DateStart: "09/2/2569",
+//     mtrReq_DateEnd: "10/2/2569",
+//     mtrReqStatus_Id: "S01",
+//     material_Id: "1",
+//     material_Code: "M-001",
+//     material_Name: "Sony Alpha a7 IV (ILCE-7M4)",
+//     material_Position: "คลังสื่อ ชั้น 2 ห้อง 204",
+//     material_Price: "25000",
+//     employee_FirstName: "คุณมะม่วง",
+//   }
+// ];
 
 export function MaterialReqTeble() {
   const { dataEmp, loader, setLoader } = useContext(MyContext);
-  const navigate = useNavigate();
+
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
@@ -123,69 +49,55 @@ export function MaterialReqTeble() {
     fetchData();
   }, [page, pageSize, dataEmp]);
 
-    useEffect(() => {
+  useEffect(() => {
     const intervalId = setInterval(fetchRealTimeData, 10000); // Fetch every 10 seconds
     return () => clearInterval(intervalId);
   }, [page, pageSize, dataEmp]);
 
-
-    const fetchData = async () => {
-      setLoader(true);
-      if (dataEmp) {
-        const resp = await GetMtrReqService(
-          page,
-          pageSize,
-          dataEmp.role_id,
-          dataEmp.dpm_id,
-        );
-        if (resp) {
-          setPage(resp.page || 1);
-          setPageSize(resp.pageSize || 10);
-          setTotalPages(resp.totalPages || 0);
-          setTotalCount(resp.total || 0);
-          setRequisitions(resp.data);
-        } else {
-        }
+  const fetchData = async () => {
+    setLoader(true);
+    if (dataEmp) {
+      const resp = await GetMtrReqService(
+        page,
+        pageSize,
+        dataEmp.role_id,
+        dataEmp.dpm_id,
+      );
+      if (resp) {
+        setPage(resp.page || 1);
+        setPageSize(resp.pageSize || 10);
+        setTotalPages(resp.totalPages || 0);
+        setTotalCount(resp.total || 0);
+        setRequisitions(resp.data);
+      } else {
       }
-      setLoader(false);
-    };
-
-    const fetchRealTimeData = async () => {
-      setLoader(true);
-      if (dataEmp) {
-        const resp = await GetMtrReqService(
-          page,
-          pageSize,
-          dataEmp.role_id,
-          dataEmp.dpm_id,
-        );
-        if (resp) {
-          setPage(resp.page || 1);
-          setPageSize(resp.pageSize || 10);
-          setTotalPages(resp.totalPages || 0);
-          setTotalCount(resp.total || 0);
-          setRequisitions(resp.data);
-        } else {
-        }
-      }
-      setLoader(false);
-    };
-
-  const onPageChange = async (e) => {
-    const selected = e.selected;
-    setPage(selected + 1);
+    }
+    setLoader(false);
   };
 
-  const handleChangePageSize = async (number) => {
-    setPageSize(number);
+  const fetchRealTimeData = async () => {
+    if (dataEmp) {
+      const resp = await GetMtrReqService(
+        page,
+        pageSize,
+        dataEmp.role_id,
+        dataEmp.dpm_id,
+      );
+      if (resp) {
+        setPage(resp.page || 1);
+        setPageSize(resp.pageSize || 10);
+        setTotalPages(resp.totalPages || 0);
+        setTotalCount(resp.total || 0);
+        setRequisitions(resp.data);
+      } else {
+      }
+    }
+    setLoader(false);
   };
-
 
   const fetchDataHistories = async (id) => {
-    setLoader(true);
     const resp = await GetMRHistoryService(id);
-    setLoader(false);
-    return resp
+    return resp;
   };
 
   const fetchDataByIdMaterial = async (id) => {
@@ -198,6 +110,15 @@ export function MaterialReqTeble() {
     return null;
   };
 
+  const onPageChange = async (e) => {
+    const selected = e.selected;
+    setPage(selected + 1);
+  };
+
+  const handleChangePageSize = async (number) => {
+    setPageSize(number);
+  };
+
   const handleChangeReq = async (data, act) => {
     setAction(act);
     if (act && act === "update") {
@@ -206,10 +127,12 @@ export function MaterialReqTeble() {
         setItemReq({ ...data, ...result });
       }
     } else if (act && act === "timeline") {
+      setLoader(true);
       const result = await fetchDataHistories(data.mtrReq_Id);
       if (result) {
         setItemReq(result);
       }
+      setLoader(false);
     } else {
       setItemReq({ ...data });
     }
@@ -247,7 +170,7 @@ export function MaterialReqTeble() {
       <div className="min-h-[70vh] mt-12 mb-8 flex flex-col gap-12">
         <div className="flex flex-row justify-between">
           <Typography variant="h6" color="blue-gray">
-            จัดการคลังสื่อฯ (Inventory)
+            รายการเบิกสื่อ
           </Typography>
           {/* <Button
             variant="gradient"
@@ -262,7 +185,7 @@ export function MaterialReqTeble() {
         <SectionReqTable
           data={requisitions}
           employee={dataEmp ? dataEmp : null}
-          loader={loader}         
+          loader={loader}
           handleChangeReq={handleChangeReq}
         />
         <div className="w-full">

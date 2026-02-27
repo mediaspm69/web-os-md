@@ -1,23 +1,26 @@
-import { PlusCircleIcon } from "@heroicons/react/24/outline";
+import { useContext, useEffect, useState } from "react";
 import { Typography, Button } from "@material-tailwind/react";
-import { useEffect, useState } from "react";
+import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 //sections
 import { SectionFormCard } from "./sections/SectionFormCard";
 import { SectionFormDialogInUp } from "./sections/SectionFormDialogInUp";
+import { SectionReqDialog } from "./sections/SectionReqDialog";
+//components
+import { OSPagination } from "@/components/OSPagination";
+//context
+import MyContext from "@/context/MyContext";
+//guard
+import { PrivateRoute } from "@/guard/PrivateRoute";
+//services
 import {
   GetMaterialService,
   InsertMaterialService,
   UpdateMaterialService,
 } from "@/services/material.service";
-import { useContext } from "react";
-import MyContext from "@/context/MyContext";
-import { SectionReqDialog } from "./sections/SectionReqDialog";
-import { PrivateRouteList } from "@/guard/PrivateRouteList";
 import { InsertMtrReqService } from "@/services/material-requisition.service";
-import Swal from "sweetalert2";
-import { OSPagination } from "@/components/OSPagination";
-import { PrivateRoute } from "@/guard/PrivateRoute";
+
 // const authorsTableData = [
 //   {
 //     material_Id: "1",
@@ -31,81 +34,11 @@ import { PrivateRoute } from "@/guard/PrivateRoute";
 //     material_Position: "คลังสื่อ ชั้น 2 ห้อง 204",
 //     material_CreationDate: "02/02/2569",
 //     mtrType_Id: "กล้อง",
-//   },
-//   {
-//     material_Id: "2",
-//     material_Code: "M-002",
-//     material_Image:
-//       "https://images.unsplash.com/photo-1606986628470-26a67fa4730c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//     material_Name: "Sony Alpha a7 IV (ILCE-7M4)",
-//     material_Detail:
-//       "เป็นกล้องมิเรอร์เลส Full-Frame ไฮบริดรุ่นยอดนิยม ความละเอียด 33MP ชิปประมวลผล BIONZ XR โฟกัสรวดเร็วแม่นยำ (Real-time Eye AF) ถ่ายวิดีโอสูงสุด 4K 60p 10-bit 4:2:2 พร้อมจอพับ Vari-angle และระบบกันสั่น 5 แกน (5.5EV) เหมาะสำหรับทั้งภาพนิ่งและวิดีโอระดับมืออาชีพ ",
-//     material_Price: "25000",
-//     material_Stock: "5",
-//     material_Position: "คลังสื่อ ชั้น 2 ห้อง 204",
-//     material_CreationDate: "02/02/2569",
-//     mtrType_Id: "กล้อง",
-//   },
-//   {
-//     material_Id: "3",
-//     material_Code: "M-003",
-//     material_Image:
-//       "https://images.unsplash.com/photo-1606986628470-26a67fa4730c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//     material_Name: "Sony Alpha a7 IV (ILCE-7M4)",
-//     material_Detail:
-//       "เป็นกล้องมิเรอร์เลส Full-Frame ไฮบริดรุ่นยอดนิยม ความละเอียด 33MP ชิปประมวลผล BIONZ XR โฟกัสรวดเร็วแม่นยำ (Real-time Eye AF) ถ่ายวิดีโอสูงสุด 4K 60p 10-bit 4:2:2 พร้อมจอพับ Vari-angle และระบบกันสั่น 5 แกน (5.5EV) เหมาะสำหรับทั้งภาพนิ่งและวิดีโอระดับมืออาชีพ ",
-//     material_Price: "25000",
-//     material_Stock: "5",
-//     material_Position: "คลังสื่อ ชั้น 2 ห้อง 204",
-//     material_CreationDate: "02/02/2569",
-//     mtrType_Id: "กล้อง",
-//   },
-//   {
-//     material_Id: "4",
-//     material_Code: "M-004",
-//     material_Image:
-//       "https://images.unsplash.com/photo-1510127034890-ba27508e9f1c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//     material_Name: "Sony Alpha a7 IV (ILCE-7M4)",
-//     material_Detail:
-//       "เป็นกล้องมิเรอร์เลส Full-Frame ไฮบริดรุ่นยอดนิยม ความละเอียด 33MP ชิปประมวลผล BIONZ XR โฟกัสรวดเร็วแม่นยำ (Real-time Eye AF) ถ่ายวิดีโอสูงสุด 4K 60p 10-bit 4:2:2 พร้อมจอพับ Vari-angle และระบบกันสั่น 5 แกน (5.5EV) เหมาะสำหรับทั้งภาพนิ่งและวิดีโอระดับมืออาชีพ ",
-//     material_Price: "25000",
-//     material_Stock: "0",
-//     material_Position: "คลังสื่อ ชั้น 2 ห้อง 204",
-//     material_CreationDate: "02/02/2569",
-//     mtrType_Id: "กล้อง",
-//   },
-//   {
-//     material_Id: "5",
-//     material_Code: "M-005",
-//     material_Image:
-//       "https://images.unsplash.com/photo-1510127034890-ba27508e9f1c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//     material_Name: "Sony Alpha a7 IV (ILCE-7M4)",
-//     material_Detail:
-//       "เป็นกล้องมิเรอร์เลส Full-Frame ไฮบริดรุ่นยอดนิยม ความละเอียด 33MP ชิปประมวลผล BIONZ XR โฟกัสรวดเร็วแม่นยำ (Real-time Eye AF) ถ่ายวิดีโอสูงสุด 4K 60p 10-bit 4:2:2 พร้อมจอพับ Vari-angle และระบบกันสั่น 5 แกน (5.5EV) เหมาะสำหรับทั้งภาพนิ่งและวิดีโอระดับมืออาชีพ ",
-//     material_Price: "25000",
-//     material_Stock: "0",
-//     material_Position: "คลังสื่อ ชั้น 2 ห้อง 204",
-//     material_CreationDate: "02/02/2569",
-//     mtrType_Id: "กล้อง",
-//   },
-//   {
-//     material_Id: "6",
-//     material_Code: "M-006",
-//     material_Image:
-//       "https://images.unsplash.com/photo-1510127034890-ba27508e9f1c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//     material_Name: "Sony Alpha a7 IV (ILCE-7M4)",
-//     material_Detail:
-//       "เป็นกล้องมิเรอร์เลส Full-Frame ไฮบริดรุ่นยอดนิยม ความละเอียด 33MP ชิปประมวลผล BIONZ XR โฟกัสรวดเร็วแม่นยำ (Real-time Eye AF) ถ่ายวิดีโอสูงสุด 4K 60p 10-bit 4:2:2 พร้อมจอพับ Vari-angle และระบบกันสั่น 5 แกน (5.5EV) เหมาะสำหรับทั้งภาพนิ่งและวิดีโอระดับมืออาชีพ ",
-//     material_Price: "25000",
-//     material_Stock: "0",
-//     material_Position: "คลังสื่อ ชั้น 2 ห้อง 204",
-//     material_CreationDate: "02/02/2569",
-//     mtrType_Id: "กล้อง",
-//   },
+//   }
 // ];
 
 export function MaterialForm() {
-  const { dataEmp, setLoader } = useContext(MyContext);
+  const { dataEmp, loader, setLoader } = useContext(MyContext);
   const navigate = useNavigate();
 
   const [itemReq, setItemReq] = useState();
@@ -123,6 +56,11 @@ export function MaterialForm() {
     fetchData();
   }, [page, pageSize, dataEmp]);
 
+  useEffect(() => {
+    const intervalId = setInterval(fetchRealTimeData, 10000); // Fetch every 10 seconds
+    return () => clearInterval(intervalId);
+  }, [page, pageSize, dataEmp]);
+
   const fetchData = async () => {
     setLoader(true);
     if (dataEmp) {
@@ -135,14 +73,32 @@ export function MaterialForm() {
       if (resp) {
         setPage(resp.page || 1);
         setPageSize(resp.pageSize || 10);
-        setTotalPages(resp.totalPages);
-        setTotalCount(resp.total);
-        setMaterials(resp.data);
+        setTotalPages(resp.totalPages || 0);
+        setTotalCount(resp.total || 0);
+        setMaterials(resp.data || []);
       } else {
       }
     }
-
     setLoader(false);
+  };
+
+  const fetchRealTimeData = async () => {
+    if (dataEmp) {
+      const resp = await GetMaterialService(
+        page,
+        pageSize,
+        dataEmp.role_id,
+        dataEmp.dpm_id,
+      );
+      if (resp) {
+        setPage(resp.page || 1);
+        setPageSize(resp.pageSize || 10);
+        setTotalPages(resp.totalPages || 0);
+        setTotalCount(resp.total || 0);
+        setMaterials(resp.data || []);
+      } else {
+      }
+    }
   };
 
   const onPageChange = async (e) => {
@@ -156,25 +112,24 @@ export function MaterialForm() {
 
   const handleOpen = (text, item) => {
     setAction(text);
-    //setOpen(true);
     setMtrItem(item);
   };
 
   const handleClose = () => {
-    //setOpen(false);
+    setAction("")
     setMtrItem(null);
     setFileBase64("");
     setImgFile(null);
+    setItemReq(null)
   };
 
   const handleOpenReq = (item) => {
     setItemReq(item);
-    //setOpenReq(true);
   };
 
   const handleCloseReq = () => {
+    setAction("")
     setItemReq(null);
-    //setOpenReq(false);
   };
 
   const handleUploadImg = async (file) => {
@@ -252,17 +207,18 @@ export function MaterialForm() {
       <div className="mt-12 mb-8 flex flex-col gap-12 min-h-[65vh]">
         <div className="flex flex-row justify-between">
           <Typography variant="h6" color="blue-gray">
-            จัดการคลังสื่อฯ (Inventory)
+            คลังสื่อ
           </Typography>
           <PrivateRoute
             rolePrimary={dataEmp && dataEmp.role_id}
             rolesTrial={"R01"}
           >
             <Button
+              disabled={loader}
               variant="gradient"
               color="blue"
               className="flex items-center justify-center gap-2"
-              onClick={() => handleOpen("insert", null)}
+              onClick={() => handleOpen("insert", {})}
             >
               <PlusCircleIcon className="w-5 h-5" />
               <p>เพื่มสื่อใหม่</p>
@@ -272,6 +228,7 @@ export function MaterialForm() {
         <SectionFormCard
           data={materials}
           employee={dataEmp ? dataEmp : null}
+          loader={loader}
           handleOpen={handleOpen}
           handleOpenReq={handleOpenReq}
         />
@@ -292,6 +249,7 @@ export function MaterialForm() {
         open={itemReq ? true : false}
         value={itemReq ? itemReq : null}
         employee={dataEmp ? dataEmp : null}
+        loader={loader}
         onSubmitReqMaterial={onSubmitReqMaterial}
         handleCloseReq={handleCloseReq}
       />
@@ -301,6 +259,7 @@ export function MaterialForm() {
         value={itemMtr ? itemMtr : null}
         action={action}
         imgFile={imgFile}
+        loader={loader}
         handleClose={handleClose}
         handleUploadImg={handleUploadImg}
         onSubmitMaterial={onSubmitMaterial}

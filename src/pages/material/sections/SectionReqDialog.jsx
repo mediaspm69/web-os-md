@@ -1,34 +1,21 @@
 import React from "react";
 import {
-  DocumentIcon,
-  InboxStackIcon,
-  PlusCircleIcon,
-} from "@heroicons/react/24/outline";
-import {
   Typography,
   Button,
   Card,
-  CardHeader,
   CardBody,
   Input,
   Textarea,
   CardFooter,
-  Menu,
-  MenuHandler,
-  MenuList,
-  MenuItem,
   Dialog,
-  DialogBody,
-  DialogFooter,
 } from "@material-tailwind/react";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-//sections
-
+import { DocumentIcon } from "@heroicons/react/24/outline";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
+//helpers
 import { inputNumber } from "@/helpers/format";
 
+//validationSchema
 const materialSchema = Yup.object().shape({
   material_Id: Yup.string().required("กรุณาระบุข้อมูล"),
   material_Code: Yup.string().required("กรุณาระบุข้อมูล"),
@@ -157,7 +144,7 @@ export const SectionReqDialog = ({
           empDpm_Id: employee ? (employee.dpm_id ?? "") : "",
           recipient_Id: "",
           recipient_Name: "",
-          recDpm_Id:"D002",
+          recDpm_Id: "D002",
           mtrReq_Amount: "",
           mtrReq_Price: "",
           mtrReq_Date: "",
@@ -236,7 +223,7 @@ export const SectionReqDialog = ({
                 <div className="grid md:grid-cols-2 grid-cols-1 gap-2 items-start">
                   <div className="w-full">
                     <Typography className="text-black" variant="h6">
-                      จำนวนที่เบิก <span className="text-red-500">*</span>
+                      {`จำนวนที่เบิก  (สูงสุด: ${parseInt(values.material_Stock || 0)})`}
                     </Typography>
                     <Input
                       size="lg"

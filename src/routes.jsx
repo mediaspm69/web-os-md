@@ -9,7 +9,7 @@ import { Home } from "@/pages/dashboard";
 import { SignIn, SignUp } from "@/pages/auth";
 import { EmployeeInsert, EmployeeTable, EmployeeUpdate } from "./pages/employee";
 import { JobInsert, JobTable, JobUpdate } from "./pages/job";
-import { MaterialTeble,MaterialForm, MaterialReqTeble, MaterialReqInUp } from "./pages/material";
+import { MaterialForm, MaterialReqTeble} from "./pages/material";
 import { ArchiveBoxIcon, DocumentChartBarIcon } from "@heroicons/react/24/outline";
 
 

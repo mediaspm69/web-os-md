@@ -1,5 +1,5 @@
 import React from "react";
-import { DocumentIcon } from "@heroicons/react/24/outline";
+
 import {
   Typography,
   Button,
@@ -9,7 +9,6 @@ import {
   Input,
   CardFooter,
   Dialog,
-  DialogBody,
   Textarea,
   Timeline,
   TimelineItem,
@@ -18,6 +17,10 @@ import {
   TimelineIcon,
   TimelineBody,
 } from "@material-tailwind/react";
+import {
+  ClockIcon,
+} from "@heroicons/react/24/solid";
+import { DocumentIcon } from "@heroicons/react/24/outline";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import { format } from "date-fns";
@@ -27,12 +30,6 @@ import {
   inputNumber,
   toThaiDateTimeString,
 } from "@/helpers/format";
-import {
-  BellIcon,
-  ClockIcon,
-  CurrencyDollarIcon,
-  HomeIcon,
-} from "@heroicons/react/24/solid";
 
 const materialSchema = Yup.object().shape({
   mtrReq_Id: Yup.string().required("กรุณาระบุข้อมูล"),
@@ -445,12 +442,6 @@ export const SectionDialogReqUp = ({
                     value={values.mrHis_Detail || ""}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    // error={Boolean(
-                    //   touched &&
-                    //   touched.mrHis_Detail &&
-                    //   errors &&
-                    //   errors.mrHis_Detail,
-                    // )}
                   />
                 </CardBody>
                 <CardFooter className="flex justify-end pt-0">

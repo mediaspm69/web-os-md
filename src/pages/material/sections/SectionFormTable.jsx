@@ -1,12 +1,11 @@
+import React from "react";
 import {
   Avatar,
   Card,
   CardBody,
-  CardHeader,
   Chip,
   Typography,
 } from "@material-tailwind/react";
-import React from "react";
 
 export const SectionFormTable = ({ data = [] }) => {
   return (

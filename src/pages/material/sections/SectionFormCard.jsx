@@ -1,8 +1,3 @@
-import { PrivateRoute } from "@/guard/PrivateRoute";
-import { PrivateRouteList } from "@/guard/PrivateRouteList";
-import { convertDriveImage } from "@/helpers/format";
-import { LinkIcon } from "@heroicons/react/24/outline";
-import { MapPinIcon } from "@heroicons/react/24/solid";
 import {
   Button,
   Card,
@@ -12,11 +7,18 @@ import {
   IconButton,
   Typography,
 } from "@material-tailwind/react";
+import { LinkIcon } from "@heroicons/react/24/outline";
+import { MapPinIcon } from "@heroicons/react/24/solid";
 import React from "react";
+//guard
+import { PrivateRoute } from "@/guard/PrivateRoute";
+//helpers
+import { convertDriveImage } from "@/helpers/format";
 
 export const SectionFormCard = ({
   employee = null,
   data = [],
+  loader = false,
   handleOpen = () => {},
   handleOpenReq = () => {},
 }) => {
@@ -112,6 +114,7 @@ export const SectionFormCard = ({
                       >
                         <div className="flex">
                           <Button
+                            disabled={loader}
                             onClick={() => handleOpen("update", itemMtr)}
                             variant="text"
                             size="md"
@@ -127,8 +130,8 @@ export const SectionFormCard = ({
                       rolePrimary={"R02"}
                       rolesTrial={employee && employee.role_id}
                     >
-                      <Button
-                        disabled={Boolean(amount <= 0)}
+                      <Button                       
+                        disabled={Boolean(amount <= 0 || loader)}
                         onClick={() => handleOpenReq(itemMtr)}
                         variant="text"
                         size="md"
@@ -139,6 +142,7 @@ export const SectionFormCard = ({
                       </Button>
                     </PrivateRoute>
                     <Button
+                      disabled={loader}
                       onClick={() => handleOpen("detail", itemMtr)}
                       variant="text"
                       size="md"

@@ -1,10 +1,4 @@
-import {
-  convertDriveImage,
-  currencyFormat,
-  inputNumber,
-  toThaiDateTimeString,
-} from "@/helpers/format";
-import { InboxStackIcon, LinkIcon } from "@heroicons/react/24/solid";
+import React from "react";
 import {
   Button,
   Card,
@@ -12,7 +6,6 @@ import {
   CardFooter,
   CardHeader,
   Dialog,
-  DialogFooter,
   IconButton,
   Input,
   Option,
@@ -20,9 +13,16 @@ import {
   Textarea,
   Typography,
 } from "@material-tailwind/react";
+import { InboxStackIcon, LinkIcon } from "@heroicons/react/24/solid";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
-import React from "react";
+//helpers
+import {
+  convertDriveImage,
+  currencyFormat,
+  inputNumber,
+  toThaiDateTimeString,
+} from "@/helpers/format";
 
 const materialSchema = Yup.object().shape({
   material_Code: Yup.string().required("กรุณาระบุข้อมูล"),
@@ -44,6 +44,7 @@ export const SectionFormDialogInUp = ({
   action = "insert" || "update" || "detail",
   imgFile = null,
   employee = null,
+  loader = false,
   handleClose = () => {},
   onSubmitMaterial = () => {},
   handleUploadImg = () => {},
@@ -148,7 +149,7 @@ export const SectionFormDialogInUp = ({
               name: "ผู้ดูแล",
               detail: mtr.employee_FirstName ?? "",
               icon: "",
-            }
+            },
           ];
         }
       }
@@ -332,7 +333,7 @@ export const SectionFormDialogInUp = ({
                         onChange={(text) =>
                           setFieldValue("material_IsShow", text)
                         }
-                                         error={Boolean(
+                        error={Boolean(
                           touched &&
                           touched.material_IsShow &&
                           errors &&
@@ -343,56 +344,6 @@ export const SectionFormDialogInUp = ({
                         <Option value="on">แสดง</Option>
                         <Option value="off">ซ่อน</Option>
                       </Select>
-                      {/* <Input
-                      disabled={Boolean(action === "update")}
-                      size="lg"
-                      className={`
-                      rounded-md 
-                      focus:border-[2px] 
-                      appearance-none                   
-                      ${
-                        touched &&
-                        touched.material_Code &&
-                        errors &&
-                        errors.material_Code
-                          ? "!border-t-red-500 "
-                          : "!border-t-gray-400 "
-                      }  
-                      placeholder:text-blue-gray-300 placeholder:opacity-100  
-                      ${
-                        touched &&
-                        touched.material_Code &&
-                        errors &&
-                        errors.material_Code
-                          ? "focus:!border-t-red-900 "
-                          : "focus:!border-t-gray-900 "
-                      } 
-                      placeholder:text-blue-gray-300 placeholder:opacity-100                                         
-                      [&::-webkit-inner-spin-button]:appearance-none 
-                      [&::-webkit-outer-spin-button]:appearance-none
-                      `}
-                      labelProps={{
-                        className: "before:content-none after:content-none",
-                      }}
-                      name="material_Code"
-                      value={values.material_Code || ""}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      error={Boolean(
-                        touched &&
-                        touched.material_Code &&
-                        errors &&
-                        errors.material_Code,
-                      )}
-                    />
-                    {touched &&
-                      touched.material_Code &&
-                      errors &&
-                      errors.material_Code && (
-                        <p className="font-normal text-red-500 text-[12px]">
-                          {errors.material_Code}
-                        </p>
-                      )} */}
                     </div>
                     <div className="w-full">
                       <Typography className="text-black" variant="h6">
@@ -735,6 +686,7 @@ export const SectionFormDialogInUp = ({
                 </CardBody>
                 <CardFooter className="pt-0 flex justify-end gap-2">
                   <Button
+                    disabled={loader}
                     variant="outlined"
                     color="blue-gray"
                     onClick={handleClose}
@@ -742,6 +694,7 @@ export const SectionFormDialogInUp = ({
                     ยกเลิก
                   </Button>
                   <Button
+                    disabled={loader}
                     variant="gradient"
                     color="blue"
                     onClick={handleSubmit}

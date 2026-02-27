@@ -1,27 +1,24 @@
-import { mrs_EmpData, mrs_ManData, mrsData } from "@/data";
-import { PrivateRoute } from "@/guard/PrivateRoute";
-import { PrivateRouteList } from "@/guard/PrivateRouteList";
-import { currencyFormat, toThaiDateString } from "@/helpers/format";
+
+import React from "react";
 import {
-  CheckCircleIcon,
+  Card,
+  CardBody,
+  Chip,
+  IconButton,
+  Typography,
+} from "@material-tailwind/react";
+import {
   ClockIcon,
   InformationCircleIcon,
   PencilIcon,
-  XMarkIcon,
 } from "@heroicons/react/24/solid";
-import {
-  Avatar,
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Chip,
-  IconButton,
-  Option,
-  Select,
-  Typography,
-} from "@material-tailwind/react";
-import React, { useState } from "react";
+//data
+import { mrs_EmpData, mrs_ManData, mrsData } from "@/data";
+//guard
+import { PrivateRoute } from "@/guard/PrivateRoute";
+import { PrivateRouteList } from "@/guard/PrivateRouteList";
+//helpers
+import { toThaiDateString } from "@/helpers/format";
 
 export const SectionReqTable = ({
   employee = null,
@@ -54,9 +51,8 @@ export const SectionReqTable = ({
                 {[
                   "รหัส",
                   "ผู้เบิก/สื่อ",
+                  "ผู้รับเบิก",
                   "จำนวน",
-                  // "ราคา/หน่วย",
-                  // "รวมมูลค่า",
                   "วันที่",
                   "สถานะ",
                 ].map((el) => (
@@ -107,22 +103,31 @@ export const SectionReqTable = ({
                         <p className="text-sm font-bold">{mtrReq_Code}</p>
                       </td>
                       <td className={className}>
-                        <div className="flex items-center gap-4">
-                          <div>
-                            <Typography
-                              variant="small"
-                              color="blue-gray"
-                              className="font-semibold"
-                            >
-                              {employee_FirstName || ""}
-                            </Typography>
-                            <Typography
-                              color="gray"
-                              className="font-normal text-sm"
-                            >
-                              {material_Name || ""}
-                            </Typography>
-                          </div>
+                        <div className="">
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-semibold"
+                          >
+                            {employee_FirstName || ""}
+                          </Typography>
+                          <Typography
+                            color="gray"
+                            className="font-normal text-sm"
+                          >
+                            {material_Name || ""}
+                          </Typography>
+                        </div>
+                      </td>
+                      <td className={className}>
+                        <div className="">
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-semibold"
+                          >
+                            {recipient_Name || ""}
+                          </Typography>
                         </div>
                       </td>
                       <td className={className}>
@@ -133,25 +138,15 @@ export const SectionReqTable = ({
                           className="py-0.5 px-2 text-[11px] font-medium w-fit"
                         />
                       </td>
-                      {/* <td className={className}>
-                        <Typography className="text-xs font-normal text-blue-gray-500">
-                          ฿{currencyFormat(parseFloat(material_Price || 0))}
-                        </Typography>
-                      </td>
-                      <td className={className}>
-                        <Typography className="text-xs font-normal text-blue-gray-500">
-                          ฿{currencyFormat(mtrReq_TotalPrice)}
-                        </Typography>
-                      </td> */}
                       <td className={className}>
                         <div>
                           <Typography className="text-xs font-semibold text-blue-gray-600">
-                            {toThaiDateString(mtrReq_Date)}
+                            {toThaiDateString(mtrReq_Date) || ""}
                           </Typography>
                         </div>
                       </td>
                       <td className={className}>
-                        {handleReqStatus(mtrReqStatus_Id)}
+                        {handleReqStatus(mtrReqStatus_Id) || ""}
                       </td>
                       <td className={className}>
                         <div className="flex gap-1 justify-end">
