@@ -8,12 +8,12 @@ import {
   Footer,
 } from "@/widgets/layout";
 import routes from "@/routes";
-import { useMaterialTailwindController, setOpenConfigurator } from "@/context";
+import { useMaterialTailwindController, setOpenConfigurator,setOpenSidenav } from "@/context";
 import { getStorage } from "@/helpers/contents";
 
 export function Dashboard() {
   const [controller, dispatch] = useMaterialTailwindController();
-  const { sidenavType } = controller;
+  const { sidenavType,openSidenav } = controller;
  const empRole = getStorage("empRole");
   return (
     <div className="min-h-screen bg-blue-gray-50/50">
@@ -35,7 +35,8 @@ export function Dashboard() {
         >
           <Cog6ToothIcon className="h-5 w-5" />
         </IconButton>
-        <Routes>
+        <div onClick={() => setOpenSidenav(dispatch, !openSidenav)}>
+           <Routes>
           {routes.filter((ft)=> ft.token === true && ft.role === empRole).map(
             ({ layout, pages }) =>
               layout === "dashboard" &&
@@ -57,6 +58,8 @@ export function Dashboard() {
               })
           )}
         </Routes>
+        </div>
+       
         <div className="text-blue-gray-600">
           <Footer />
         </div>

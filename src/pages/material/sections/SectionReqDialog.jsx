@@ -165,7 +165,7 @@ export const SectionReqDialog = ({
         }) => (
           <Form onSubmit={handleSubmit}>
             <Card className="mx-auto w-full">
-              <CardBody className="flex flex-col gap-4 overflow-scroll max-h-[80vh]">
+              <CardBody className="flex flex-col gap-4 overflow-scroll md:max-h-[80vh] max-h-[70vh]">
                 <div className="flex flex-row justify-start items-center gap-2">
                   <DocumentIcon className="w-5 h-5" />
                   <Typography variant="h4" color="blue-gray">

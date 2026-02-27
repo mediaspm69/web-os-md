@@ -68,7 +68,7 @@ export function MaterialReqTeble() {
         setPageSize(resp.pageSize || 10);
         setTotalPages(resp.totalPages || 0);
         setTotalCount(resp.total || 0);
-        setRequisitions(resp.data);
+        setRequisitions(resp.data || []);
       } else {
       }
     }
@@ -88,11 +88,10 @@ export function MaterialReqTeble() {
         setPageSize(resp.pageSize || 10);
         setTotalPages(resp.totalPages || 0);
         setTotalCount(resp.total || 0);
-        setRequisitions(resp.data);
+        setRequisitions(resp.data || []);
       } else {
       }
     }
-    setLoader(false);
   };
 
   const fetchDataHistories = async (id) => {

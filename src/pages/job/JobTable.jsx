@@ -1,9 +1,10 @@
+import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Card,
   CardBody,
   Typography,
   Button,
-  CardHeader,
   IconButton,
   Dialog,
   DialogBody,
@@ -11,12 +12,9 @@ import {
   Textarea,
   Chip,
   CardFooter,
-  Input,
   PopoverHandler,
   Popover,
   PopoverContent,
-  Select,
-  Option,
 } from "@material-tailwind/react";
 import {
   DeleteJobService,
@@ -26,8 +24,6 @@ import {
   RemoveIsShowService,
   UpdateJobStatusService,
 } from "@/services/job.service";
-import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   ArrowPathIcon,
   ChevronLeftIcon,
@@ -38,19 +34,24 @@ import {
   TrashIcon,
   XMarkIcon,
 } from "@heroicons/react/24/solid";
-import MyContext from "@/context/MyContext";
 import Swal from "sweetalert2";
-
-import { toThaiDateTimeString } from "@/helpers/format";
-import { isShowData, jobStaEmp, jobStaManager, jsData } from "@/data";
-import { JobHsitoryTimeline } from "./sections/JobHsitoryTimeline";
+import { DayPicker } from "react-day-picker";
 import { Form, Formik } from "formik";
 import { format } from "date-fns";
 import { th } from "date-fns/locale";
+//context
+import MyContext from "@/context/MyContext";
+//sections
+import { JobHsitoryTimeline } from "./sections/JobHsitoryTimeline";
+//components
 import { OSPagination } from "@/components/OSPagination";
+//guard
 import { PrivateRouteList } from "@/guard/PrivateRouteList";
 import { PrivateRoute } from "@/guard/PrivateRoute";
-import { DayPicker } from "react-day-picker";
+//helpers
+import { toThaiDateTimeString } from "@/helpers/format";
+//data
+import { isShowData, jobStaEmp, jobStaManager, jsData } from "@/data";
 
 export function JobTable() {
   const navigate = useNavigate();
@@ -88,8 +89,8 @@ export function JobTable() {
       const res = await GetListJobService(
         page,
         pageSize,
-        dataEmp.dpm_id,
-        dataEmp.role_id,
+        dataEmp.dpm_id ?? "",
+        dataEmp.role_id ?? "",
         seas
       );
 

@@ -62,7 +62,7 @@ export const SectionReqTable = ({
                   >
                     <Typography
                       variant="small"
-                      className="text-[11px] font-bold uppercase text-blue-gray-400"
+                      className="text-[11px] font-bold uppercase text-blue-gray-400 "
                     >
                       {el}
                     </Typography>
@@ -100,27 +100,27 @@ export const SectionReqTable = ({
                   return (
                     <tr key={key}>
                       <td className={className}>
-                        <p className="text-sm font-bold">{mtrReq_Code}</p>
+                        <p className="text-sm font-bold w-[100px]">{mtrReq_Code}</p>
                       </td>
                       <td className={className}>
                         <div className="">
                           <Typography
                             variant="small"
                             color="blue-gray"
-                            className="font-semibold"
+                            className="font-semibold w-[150px]"
                           >
                             {employee_FirstName || ""}
                           </Typography>
                           <Typography
                             color="gray"
-                            className="font-normal text-sm"
+                            className="font-normal text-sm w-[150px]"
                           >
                             {material_Name || ""}
                           </Typography>
                         </div>
                       </td>
                       <td className={className}>
-                        <div className="">
+                        <div className="w-[50px]">
                           <Typography
                             variant="small"
                             color="blue-gray"
@@ -140,13 +140,13 @@ export const SectionReqTable = ({
                       </td>
                       <td className={className}>
                         <div>
-                          <Typography className="text-xs font-semibold text-blue-gray-600">
+                          <Typography className="text-xs font-semibold text-blue-gray-600 w-[120px]">
                             {toThaiDateString(mtrReq_Date) || ""}
                           </Typography>
                         </div>
                       </td>
                       <td className={className}>
-                        {handleReqStatus(mtrReqStatus_Id) || ""}
+                          <Typography className="text-xs font-semibold text-blue-gray-600 w-[70px]">{handleReqStatus(mtrReqStatus_Id) || ""}</Typography>
                       </td>
                       <td className={className}>
                         <div className="flex gap-1 justify-end">

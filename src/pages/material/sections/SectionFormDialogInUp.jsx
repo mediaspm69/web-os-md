@@ -156,7 +156,7 @@ export const SectionFormDialogInUp = ({
     }
 
     return (
-      <Card className=" w-full h-[90vh] overflow-scroll">
+      <Card className="w-full h-full">
         <CardHeader
           floated={false}
           shadow={false}
@@ -164,7 +164,8 @@ export const SectionFormDialogInUp = ({
         >
           <div className="w-full md:w-96"></div>
         </CardHeader>
-        <table className="w-full min-w-max table-auto text-left">
+         <CardBody className="flex overflow-scroll md:max-h-[80vh] max-h-[70vh]">
+             <table className="w-full min-w-max table-auto text-left">
           <thead>
             <tr>
               {TABLE_HEAD.length > 0 &&
@@ -263,6 +264,8 @@ export const SectionFormDialogInUp = ({
             </tr>
           </tbody>
         </table>
+         </CardBody>
+     
       </Card>
     );
   };
@@ -311,7 +314,7 @@ export const SectionFormDialogInUp = ({
           }) => (
             <Form onSubmit={handleSubmit}>
               <Card className="mx-auto w-full">
-                <CardBody className="flex flex-col gap-4 overflow-scroll max-h-[80vh]">
+                <CardBody className="flex flex-col gap-4 overflow-scroll md:max-h-[80vh] max-h-[70vh]">
                   <div className="flex flex-row justify-start items-center gap-2">
                     <InboxStackIcon className="w-5 h-5" />
                     <Typography variant="h4" color="blue-gray">

@@ -17,9 +17,7 @@ import {
   TimelineIcon,
   TimelineBody,
 } from "@material-tailwind/react";
-import {
-  ClockIcon,
-} from "@heroicons/react/24/solid";
+import { ClockIcon } from "@heroicons/react/24/solid";
 import { DocumentIcon } from "@heroicons/react/24/outline";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
@@ -166,7 +164,7 @@ export const SectionDialogReqUp = ({
           }) => (
             <Form onSubmit={handleSubmit}>
               <Card className="mx-auto w-full">
-                <CardBody className="flex flex-col gap-4 overflow-scroll max-h-[80vh]">
+                <CardBody className="flex flex-col gap-4 overflow-scroll md:max-h-[80vh] max-h-[70vh]">
                   <div className="flex flex-row justify-start items-center gap-2">
                     <DocumentIcon className="w-5 h-5" />
                     <Typography variant="h4" color="blue-gray">
@@ -428,7 +426,7 @@ export const SectionDialogReqUp = ({
                     {values.mtrReqStatus_Name}
                   </Typography>
                 </CardHeader>
-                <CardBody>
+                <CardBody className="flex flex-col gap-4 overflow-scroll md:max-h-[80vh] max-h-[70vh]">
                   <Typography
                     color="blue-gray"
                     variant="lead"
@@ -462,63 +460,65 @@ export const SectionDialogReqUp = ({
           >
             <div className="w-full md:w-96"></div>
           </CardHeader>
-          <table className="w-full min-w-max table-auto text-left">
-            <thead>
-              <tr>
-                {TABLE_HEAD.length > 0 &&
-                  TABLE_HEAD.map((head) => (
-                    <th key={head} className="border-b border-gray-300 p-4">
-                      <div className="flex items-center gap-1">
-                        <Typography
-                          color="blue-gray"
-                          variant="small"
-                          className="!font-bold"
-                        >
-                          {head}
-                        </Typography>
-                      </div>
-                    </th>
-                  ))}
-              </tr>
-            </thead>
-            <tbody>
-              {TABLE_ROWS.length > 0 &&
-                TABLE_ROWS.map(({ name, detail }, index) => {
-                  const isLast = index === TABLE_ROWS.length - 1;
-                  const classes = isLast
-                    ? "p-4"
-                    : "p-4 border-b border-gray-300";
-
-                  return (
-                    <tr key={index}>
-                      <td className={classes}>
+          <CardBody className="flex overflow-scroll md:max-h-[80vh] max-h-[70vh]">
+            <table className="w-full min-w-max table-auto text-left">
+              <thead>
+                <tr>
+                  {TABLE_HEAD.length > 0 &&
+                    TABLE_HEAD.map((head) => (
+                      <th key={head} className="border-b border-gray-300 p-4">
                         <div className="flex items-center gap-1">
                           <Typography
-                            variant="small"
                             color="blue-gray"
-                            className="font-bold"
+                            variant="small"
+                            className="!font-bold"
                           >
-                            {name}
+                            {head}
                           </Typography>
                         </div>
-                      </td>
-                      <td className={classes}>
-                        <Typography
-                          variant="small"
-                          className="font-normal text-gray-600"
-                        >
-                          {detail}
-                        </Typography>
-                      </td>
-                    </tr>
-                  );
-                })}
-            </tbody>
-          </table>
+                      </th>
+                    ))}
+                </tr>
+              </thead>
+              <tbody>
+                {TABLE_ROWS.length > 0 &&
+                  TABLE_ROWS.map(({ name, detail }, index) => {
+                    const isLast = index === TABLE_ROWS.length - 1;
+                    const classes = isLast
+                      ? "p-4"
+                      : "p-4 border-b border-gray-300";
+
+                    return (
+                      <tr key={index}>
+                        <td className={classes}>
+                          <div className="flex items-center gap-1">
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-bold"
+                            >
+                              {name}
+                            </Typography>
+                          </div>
+                        </td>
+                        <td className={classes}>
+                          <Typography
+                            variant="small"
+                            className="font-normal text-gray-600"
+                          >
+                            {detail}
+                          </Typography>
+                        </td>
+                      </tr>
+                    );
+                  })}
+              </tbody>
+            </table>
+          </CardBody>
         </Card>
       ) : action === "timeline" ? (
         <Card>
-          <CardBody className="overflow-scroll max-h-[90vh]">
+                 <CardBody className="flex overflow-scroll md:max-h-[80vh] max-h-[70vh]">
             <Timeline>
               {value &&
                 value.length > 0 &&

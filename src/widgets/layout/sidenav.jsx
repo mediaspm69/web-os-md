@@ -21,7 +21,7 @@ import { useState } from "react";
 
 export function Sidenav({ brandImg, brandName, routes }) {
   const [controller, dispatch] = useMaterialTailwindController();
-  
+
   const { sidenavColor, sidenavType, openSidenav } = controller;
   const sidenavTypes = {
     dark: "bg-gradient-to-br from-gray-800 to-gray-900",
@@ -36,8 +36,8 @@ export function Sidenav({ brandImg, brandName, routes }) {
     setIsValid(text);
   };
 
-//   const regex = "555"
-// console.log('match', Boolean("/1234-555-".match(regex)))
+  //   const regex = "555"
+  // console.log('match', Boolean("/1234-555-".match(regex)))
 
   return (
     <aside
@@ -76,16 +76,14 @@ export function Sidenav({ brandImg, brandName, routes }) {
                   </Typography>
                 </li>
               )}
-              {pages.map(({ show, icon, name, path,layout2,pages2 }) => {
+              {pages.map(({ show, icon, name, path, layout2, pages2 }) => {
                 if (show === true) {
                   return (
                     <li key={name}>
-                    
-                         <Accordion
+                      <Accordion
                         open={Boolean(isValid === name)}
                         className="w-full "
                       >
-               
                         <AccordionHeader
                           className={`hover:bg-blue-gray-50 rounded-md py-3 pl-4 w-full `}
                           onClick={() => {
@@ -141,37 +139,39 @@ export function Sidenav({ brandImg, brandName, routes }) {
                                 </Button>
                               )}
                             </NavLink>
-                            {pages2.filter((ft)=> ft.show2 === true).map(({ icon2, name2, path2 }) => (
-                              <div key={name2}>
-                                <NavLink to={`/${layout}${path2}`}>
-                                  {({ isActive }) => (
-                                    <Button
-                                      variant={isActive ? "gradient" : "text"}
-                                      color={
-                                        isActive &&
-                                        sidenavColor &&
-                                        sidenavType === "dark"
-                                          ? "white"
-                                          : "blue-gray"
-                                      }
-                                      className="flex items-center gap-4 px-4 capitalize "
-                                      fullWidth
-                                    >
-                                      {icon2}
-                                      <Typography
-                                        color="inherit"
-                                        className="font-medium capitalize"
+                            {pages2
+                              .filter((ft) => ft.show2 === true)
+                              .map(({ icon2, name2, path2 }) => (
+                                <div key={name2}>
+                                  <NavLink to={`/${layout}${path2}`}>
+                                    {({ isActive }) => (
+                                      <Button
+                                        variant={isActive ? "gradient" : "text"}
+                                        color={
+                                          isActive &&
+                                          sidenavColor &&
+                                          sidenavType === "dark"
+                                            ? "white"
+                                            : "blue-gray"
+                                        }
+                                        className="flex items-center gap-4 px-4 capitalize "
+                                        fullWidth
                                       >
-                                        {name2}
-                                      </Typography>
-                                    </Button>
-                                  )}
-                                </NavLink>
-                              </div>
-                            ))}
+                                        {icon2}
+                                        <Typography
+                                          color="inherit"
+                                          className="font-medium capitalize"
+                                        >
+                                          {name2}
+                                        </Typography>
+                                      </Button>
+                                    )}
+                                  </NavLink>
+                                </div>
+                              ))}
                           </div>
                         </AccordionBody>
-                      </Accordion>                                         
+                      </Accordion>
                     </li>
                   );
                 } else if (show === false) {
