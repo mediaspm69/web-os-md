@@ -103,7 +103,7 @@ export function JobUpdate() {
           empDpt_Id: dataEmp ? dataEmp.dpm_id ?? "": "",
           employee_Id: job ? job.employee_Id ?? "" : "",
           employee_FirstName: job ? job.employee_FirstName ?? "" : "",
-          department_Id: "D002",
+          department_Id: job ? job.department_Id ?? "" : "",
           position_Id: job ? job.position_Id ?? "" : "",
           fileBase64: "",
           job_file: "",
@@ -280,7 +280,7 @@ export function JobUpdate() {
                 >
                   รายละเอียดงาน (Job Detail)
                 </Typography>
-                <div className="w-full mb-2">
+          <div className="w-full mb-2">
                   <Typography
                     variant="small"
                     color="blue-gray"
@@ -289,7 +289,7 @@ export function JobUpdate() {
                     สั่งงานแผนก <span className="text-red-500">*</span>
                   </Typography>
                   <select
-                    disabled
+                    
                     className={`
                      w-full 
                      bg-transparent 
@@ -319,17 +319,17 @@ export function JobUpdate() {
                       `}
                     name="department_Id"
                     value={values.department_Id || ""}
-                    onChange={(e) => {
-                      setFieldValue("department_Id", e.target.value);
-                    }}
+                    onChange={handleChange}
                     onBlur={handleBlur}
                   >
                     <option value="">None</option>
-                       {dpms && dpms.length > 0 && dpms.map(({department_Id,department_Name}, index) => (
-                      <option value={department_Id} key={index}>
-                        {department_Name}
-                      </option>
-                    ))}
+                    {dpms &&
+                      dpms.length > 0 &&
+                      dpms.filter((ft)=> ft.jobDpm_IsShow === "on").map(({ department_Id, department_Name }, index) => (
+                        <option value={department_Id} key={index}>
+                          {department_Name}
+                        </option>
+                      ))}
                   </select>
                   {touched &&
                     touched.department_Id &&

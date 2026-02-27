@@ -46,7 +46,7 @@ const jobSchema = Yup.object().shape({
 
 export const JobInsert = () => {
   const navigate = useNavigate();
-  const { loader, setLoader,dataEmp,dpms,  } = useContext(MyContext);
+  const { loader, setLoader,dataEmp,dpms  } = useContext(MyContext);
 
   const onSubmitJob = async (value) => {
     setLoader(true);
@@ -64,6 +64,9 @@ export const JobInsert = () => {
     }
     setLoader(false);
   };
+
+  //console.log('dpms',dpms);
+  
 
 
   return (
@@ -96,8 +99,8 @@ export const JobInsert = () => {
           empDpt_Id: dataEmp ? dataEmp.dpm_id ?? "" : "",
           employee_Id: dataEmp ? dataEmp.id : "",
           employee_FirstName: dataEmp ? dataEmp.firstname : "",
-          department_Id: "D002",
           position_Id: dataEmp ? dataEmp.position_Id ?? "" : "",
+          department_Id:"",
           fileBase64: "",
           open: false,
         }}
@@ -315,18 +318,17 @@ export const JobInsert = () => {
                     hover:border-blue-gray-400  
                       appearance-none cursor-pointer
                       `}
+
                     name="department_Id"
                     value={values.department_Id || ""}
-                    onChange={(e) => {
-                      setFieldValue("department_Id", e.target.value);
-                    }}
-                    onBlur={handleBlur}
+                    onChange={(e)=> setFieldValue('department_Id',e.target.value)}
+                    //onBlur={handleBlur}
                   >
                     <option value="">None</option>
                     {dpms &&
                       dpms.length > 0 &&
-                      dpms.filter((ft)=> ft.jobDpm_IsShow === "on").map(({ department_Id, department_Name }, index) => (
-                        <option value={department_Id} key={index}>
+                      dpms.filter((ft)=> ft.jobDpm_IsShow === "on")?.map(({ department_Id, department_Name }, index) => (
+                        <option key={index} value={department_Id} >
                           {department_Name}
                         </option>
                       ))}

@@ -8,13 +8,17 @@ import {
   Footer,
 } from "@/widgets/layout";
 import routes from "@/routes";
-import { useMaterialTailwindController, setOpenConfigurator,setOpenSidenav } from "@/context";
+import {
+  useMaterialTailwindController,
+  setOpenConfigurator,
+  setOpenSidenav,
+} from "@/context";
 import { getStorage } from "@/helpers/contents";
 
 export function Dashboard() {
   const [controller, dispatch] = useMaterialTailwindController();
-  const { sidenavType,openSidenav } = controller;
- const empRole = getStorage("empRole");
+  const { sidenavType, openSidenav } = controller;
+  const empRole = getStorage("empRole");
   return (
     <div className="min-h-screen bg-blue-gray-50/50">
       <Sidenav
@@ -35,34 +39,39 @@ export function Dashboard() {
         >
           <Cog6ToothIcon className="h-5 w-5" />
         </IconButton>
-        <div onClick={() => setOpenSidenav(dispatch, !openSidenav)}>
-           <Routes>
-          {routes.filter((ft)=> ft.token === true && ft.role === empRole).map(
-            ({ layout, pages }) =>
-              layout === "dashboard" &&
-              pages.map(({ path, element, pages2 }) => {
-                if (pages2 && pages2.length > 0) {
-                  const elementRoute = pages2.map(
-                    ({ path2, element2 }, key2) => (
-                      <Route key={key2} exact path={path2} element={element2} />
-                    )
-                  );
-                  return (
-                    <Route>
-                      <Route exact path={path} element={element} />
-                      {elementRoute}
-                    </Route>
-                  );
-                }
-                return <Route exact path={path} element={element} />;
-              })
-          )}
+        <Routes>
+          {routes
+            .filter((ft) => ft.token === true && ft.role === empRole)
+            .map(
+              ({ layout, pages }) =>
+                layout === "dashboard" &&
+                pages.map(({ path, element, pages2 }) => {
+                  if (pages2 && pages2.length > 0) {
+                    const elementRoute = pages2.map(
+                      ({ path2, element2 }, key2) => (
+                        <Route
+                          key={key2}
+                          exact
+                          path={path2}
+                          element={element2}
+                        />
+                      ),
+                    );
+                    return (
+                      <Route>
+                        <Route exact path={path} element={element} />
+                        {elementRoute}
+                      </Route>
+                    );
+                  }
+                  return <Route exact path={path} element={element} />;
+                }),
+            )}
         </Routes>
-        </div>
-       
-        <div className="text-blue-gray-600">
-          <Footer />
-        </div>
+      </div>
+
+      <div className="text-blue-gray-600">
+        <Footer />
       </div>
     </div>
   );
