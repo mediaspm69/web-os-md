@@ -84,7 +84,7 @@ export function JobTable() {
 
   const fetchData = async () => {
     setLoader(true);
-    if (dataEmp && dataEmp.dpm_id) {
+    if (dataEmp) {
       const res = await GetListJobService(
         page,
         pageSize,
@@ -103,12 +103,12 @@ export function JobTable() {
   };
 
   const fetchRealTimeData = async () => {
-    if (dataEmp && dataEmp.dpm_id) {
+    if (dataEmp) {
       const res = await GetListJobService(
         page,
         pageSize,
-        dataEmp.dpm_id,
-        dataEmp.role_id,
+        dataEmp.dpm_id ?? "",
+        dataEmp.role_id ?? "",
         seas
       );
 
