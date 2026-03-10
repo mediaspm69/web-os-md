@@ -11,6 +11,7 @@ import { EmployeeInsert, EmployeeTable, EmployeeUpdate } from "./pages/employee"
 import { JobInsert, JobTable, JobUpdate } from "./pages/job";
 import { MaterialForm, MaterialReqTeble} from "./pages/material";
 import { ArchiveBoxIcon, DocumentChartBarIcon } from "@heroicons/react/24/outline";
+import JobPDF from "./pages/job/JobPDF";
 
 
 const icon = {
@@ -135,6 +136,14 @@ export const routes = [
             name2: "job insert",
             path2: "/job/update",
             element2: <JobUpdate />,
+            show2: false,
+          },
+          ,
+          {
+            icon2: <UserIcon {...icon} />,
+            name2: "job insert",
+            path2: "/job/pdf",
+            element2: <JobPDF />,
             show2: false,
           },
         ],

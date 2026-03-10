@@ -10,19 +10,18 @@ import {
   ReportChartJobsService,
   ReportDepatrmentListService,
   ReportHistoryTimeService,
-  ReportStatusListService,
+  ReportListTotalService,
 } from "@/services/job.service";
 import MyContext from "@/context/MyContext";
 import { StatisticsCard } from "@/widgets/cards";
 import ReactApexChart from "react-apexcharts";
 import { monthTH } from "@/helpers/month";
-import { PrivateRoute } from "@/guard/PrivateRoute";
 import { PrivateRouteList } from "@/guard/PrivateRouteList";
 
 export function Home() {
   const { dataEmp, setLoader } = useContext(MyContext);
   const [dpms, setDpms] = useState([]);
-  const [staList, setStaList] = useState([]);
+  const [totalList, setTotalList] = useState({status:[],types:[]});
   const [hisTime, setHisTime] = useState({
     days: 0,
     hours: 0,
@@ -36,7 +35,7 @@ export function Home() {
 
   useEffect(() => {
     fetchDataDPMS();
-    fetchDataStatus();
+    fetchDataListTotal();
     fetchDataHistoryTime();
     fetchDataChartJob();
   }, [yearJobs, dataEmp]);
@@ -51,16 +50,17 @@ export function Home() {
     }
   };
 
-  const fetchDataStatus = async () => {
+  const fetchDataListTotal = async () => {
     if (dataEmp) {
-      const resp = await ReportStatusListService(
+      const resp = await ReportListTotalService(
         dataEmp.role_id,
         dataEmp.dpm_id,
       );
+      console.log('resp',resp)
       if (resp) {
-        setStaList(resp);
+        setTotalList({status:resp.data_status,types:resp.data_types});
       } else {
-        setStaList([]);
+        setTotalList({status:[],types:[]});
       }
     }
   };
@@ -162,59 +162,35 @@ export function Home() {
           },
         },
       },
-      // {
-      //   emtYear: year && (
-      //     <div className="flex justify-end w-full">
-      //       <div className="w-[250px] mx-auto">
-      //         <select
+    ];
+  };
 
-      //           value={yearMember || year}
-      //           onChange={(e) => setYearMember(e.target.value)}
-      //           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-      //         >
-      //           {getYearsDown(year).map((item,index) => (
-      //             <option key={index} value={item}>{item}</option>
-      //           ))}
-      //         </select>
-      //       </div>
-      //     </div>
-      //   ),
-      //   series: [
-      //     {
-      //       name: "จำนวน",
-      //       data: members.map((item) => item.count),
-      //     },
-      //   ],
-      //   options: {
-      //     chart: {
-      //       height: 350,
-      //       type: "line",
-      //       zoom: {
-      //         enabled: false,
-      //       },
-      //     },
-      //     dataLabels: {
-      //       enabled: false,
-      //     },
-      //     stroke: {
-      //       curve: "straight",
-      //     },
-      //     title: {
-      //       text: "จำนวนข้อมูลสมาชิก",
-      //       align: "left",
-      //     },
-      //     grid: {
-      //       row: {
-      //         colors: ["#f3f3f3", "transparent"], // takes an array which will be repeated on columns
-      //         opacity: 0.5,
-      //       },
-      //     },
-      //     xaxis: {
-      //       name: "เดือน",
-      //       categories: monthTH,
-      //     },
-      //   },
-      // },
+    const pieData = ({status,types}) => {
+    return [
+      {
+        name:"สถานะ",
+        series: status.map((item) => item.total),
+        options: {
+          chart: {
+            type: "pie",
+          },
+          labels: status.map((item) => `${item.jobStatus_Name} (${item.total})`),
+
+        },
+         className:"xl:h-[350px] lg:h-[450px]  md:h-[450px]  sm:h-[350px]  h-[300px]  w-full"
+      },      
+      {
+        name:"ประเภท",
+        series: types.map((item) => item.total),
+        options: {
+          chart: {
+            type: "pie",
+          },
+          labels: types.map((item) => `${item.jobType_Name} (${item.total})`),
+        
+        },
+          className:"xl:h-[350px] lg:h-[450px]  md:h-[450px]  sm:h-[350px] h-[300px]  w-full"
+      },
     ];
   };
 
@@ -233,11 +209,9 @@ export function Home() {
           )}
         </PrivateRouteList>
 
-        {staList &&
-          staList.length > 0 &&
-          staList
-            .sort((a, b) => a.jobStatus_Id.localeCompare(b.jobStatus_Id))
-            .map(({ jobStatus_Id, jobStatus_Name, total }) => {
+        {totalList &&
+          totalList.status.length > 0 &&
+          totalList.status.map(({ jobStatus_Id, jobStatus_Name, total }) => {
               if (
                 jobStatus_Id === "S02" ||
                 jobStatus_Id === "S03" ||
@@ -262,6 +236,25 @@ export function Home() {
             />
           )}
         </PrivateRouteList>
+      </div>
+      <div className="w-full min-h-[450px] grid lg:grid-cols-2 grid-cols-1">
+        {totalList &&
+          pieData(totalList)?.map(
+            ({ name, options, series, className }, index) => (
+              <div key={index} className="w-full h-full" >
+                <p className="text-left text-lg font-bold">{name}</p>
+                <div className={className}>
+                  <ReactApexChart
+                    options={options}
+                    series={series}
+                    type="pie"
+                    width={"100%"}
+                    height={"100%"}
+                  />
+                </div>
+              </div>
+            ),
+          )}
       </div>
       <div className="mb-4 grid grid-cols-1 gap-6 ">
         <PrivateRouteList

@@ -25,6 +25,8 @@ import {
   UpdateJobStatusService,
 } from "@/services/job.service";
 import {
+  ArrowDownIcon,
+  ArrowDownTrayIcon,
   ArrowPathIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -39,6 +41,9 @@ import { DayPicker } from "react-day-picker";
 import { Form, Formik } from "formik";
 import { format } from "date-fns";
 import { th } from "date-fns/locale";
+//PDF
+import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
+import fontkit from '@pdf-lib/fontkit';
 //context
 import MyContext from "@/context/MyContext";
 //sections
@@ -170,6 +175,149 @@ export function JobTable() {
   //     }
   //   }
   // };
+
+  const handleDownloadPDF = async (itemPdf) => {
+      try {
+        const mmToPt = (mm) => mm * 2.8346;
+        // 1. โหลดไฟล์ PDF ต้นฉบับ
+        const existingPdfBytes = await fetch('/MediaReportingDocument.pdf').then(res => res.arrayBuffer());
+        const pdfDoc = await PDFDocument.load(existingPdfBytes);
+        pdfDoc.registerFontkit(fontkit);
+  
+        // 2. โหลดฟอนต์ภาษาไทย
+        const fontBytes = await fetch('/font/ThaiFonts/THSarabunNew.ttf').then(res => res.arrayBuffer());
+        const thaiFont = await pdfDoc.embedFont(fontBytes);
+        
+        const code = itemPdf.job_Code || ""
+        const creationDate = format(itemPdf.job_CreationDate,'dd/MM/yyyy HH:mm:ss') || ""
+        const dateTime = format(itemPdf.job_DateTime,'dd/MM/yyyy HH:mm:ss') || ""
+        const emp_name = itemPdf.employee_FirstName || ""
+        const emp_dpt = departmentData(itemPdf.empDpt_Id)
+        const rev_name = itemPdf.reviewer_Name || ""
+        const target = itemPdf.job_Target || ""
+        const objective = itemPdf.job_Objective || ""
+        const job_mt = itemPdf.job_mt || ""
+        const job_mf = itemPdf.job_mf || ""
+        const rec_name = itemPdf.recipient_Name || ""
+        const dpm_Id = departmentData(itemPdf.department_Id)
+
+        // 3. ตั้งค่าหน้ากระดาษ (A4: 595 x 842 pts)
+        const pages = pdfDoc.getPages();
+        const firstPage = pages[0];
+        const { width, height } = firstPage.getSize();
+  
+        const item_pdfs = [
+          {
+            id: 1,
+            text: code,
+            x_axis: 43.5,
+            y_axis: 39,
+          },
+          {
+            id: 2,
+            text: creationDate,
+            x_axis: 97,
+            y_axis: 39,
+          },
+          ,
+          {
+            id: 3,
+            text: dateTime,
+            x_axis: 150,
+            y_axis: 39,
+          },
+          {
+            id: 4,
+            text: emp_name || "",
+            x_axis: 42,
+            y_axis: 46,
+          },
+          {
+            id: 5,
+            text: emp_dpt || "",
+            x_axis: 145,
+            y_axis: 46,
+          },
+          {
+            id: 6,
+            text: rev_name || "",
+            x_axis: 51,
+            y_axis: 53,
+          },
+          {
+            id: 7,
+            text: objective || "",
+            x_axis: 45,
+            y_axis: 60.5,
+          },
+          {
+            id: 8,
+            text: target || "",
+            x_axis: 142,
+            y_axis: 60.5,
+          },
+          {
+            id: 9,
+            text: job_mf || "",
+            x_axis: 51.5,
+            y_axis: 68.5,
+          },
+          {
+            id: 10,
+            text: job_mt || "",
+            x_axis: 142,
+            y_axis: 68.5,
+          },
+          {
+            id: 11,
+            text: rec_name || "",
+            x_axis: 45,
+            y_axis: 168,
+          },
+          // {
+          //   id: 12,
+          //   text: dpm_Id || "",
+          //   x_axis: 47,
+          //   y_axis: 166,
+          // },
+        ];
+        // PDF นับ Y จากล่างขึ้นบน จึงต้องเอาความสูงทั้งหมดลบออก
+
+        // 4. เขียนข้อความลงไป คำนวณพิกัดจากหน่วย mm (อิงจากขอบ ซ้าย-บน)
+        item_pdfs.forEach((emt) => {
+          const targetX = mmToPt(emt.x_axis);
+          const targetYFromTop = mmToPt(emt.y_axis);
+          const finalY = height - targetYFromTop;
+
+          firstPage.drawText(emt.text, {
+            x: targetX,
+            y: finalY,
+            size: 14, // ปรับขนาดตามเหมาะสม
+            font: thaiFont,
+            color: rgb(0, 0, 0),
+          });
+        });
+
+
+  
+        // 5. สร้างไฟล์และสั่ง Download
+        const pdfBytes = await pdfDoc.save();
+        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'เอกสารแจ้งงานสื่อฯ.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+  
+      } catch (error) {
+        console.error('เกิดข้อผิดพลาด:', error);
+        alert('ไม่สามารถสร้างไฟล์ PDF ได้');
+      }
+    };
 
   const jobStatusData = (id) => {
     if (id) {
@@ -505,17 +653,26 @@ export function JobTable() {
                 {jobs.data && jobs.data.length > 0 ? (
                   <>
                     {jobs.data.map((iJob, index) => (
-                      <Card
-                        key={index}
-                        onClick={async () => await handleOpen(iJob)}
-                      >
+                      <Card key={index}>
                         <CardBody className="grid md:grid-cols-2 sm:grid-cols-1">
                           <div className="flex flex-row justify-start items-center gap-2">
-                            <div>{/* <Avatar alt="5" /> */}</div>
                             <div className="flex flex-col">
-                              <Typography variant="h6" color="black">
-                                {iJob.job_Code}
-                              </Typography>
+                              <div className="flex gap-2">
+                                <Button
+                                  type="button"
+                                  variant="text"
+                                  className="text-left p-1 m-0 w-fit"
+                                >
+                                  <Typography
+                                    variant="h6"
+                                    color="blue"
+                                    onClick={async () => await handleOpen(iJob)}
+                                  >
+                                    {iJob.job_Code}
+                                  </Typography>
+                                </Button>
+                              </div>
+
                               <Typography variant="h6" color="black">
                                 <span className="text-blue-gray-800">
                                   หัวข้อ:
@@ -555,6 +712,22 @@ export function JobTable() {
                             </div>
                           </div>
                           <div className="flex md:flex-col md:justify-center justify-start md:items-end items-start gap-2">
+                            <PrivateRoute
+                              rolePrimary={iJob.recipient_Id}
+                              rolesTrial={dataEmp.id}
+                            >
+                              <Button
+                                size="sm"
+                                color="red"
+                                onClick={async () =>
+                                  await handleDownloadPDF(iJob)
+                                }
+                                className="flex gap-1"
+                              >
+                                <ArrowDownTrayIcon className="w-4 h-4" />{" "}
+                                <span>PDF </span>
+                              </Button>
+                            </PrivateRoute>
                             {iJob.recipient_Name && (
                               <Chip
                                 color="purple"

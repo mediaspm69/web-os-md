@@ -136,13 +136,13 @@ export const RemoveIsShowService = async (id,isShow) => {
   }
 };
 
-export const ReportStatusListService = async (role_Id,department_Id) => {
+export const ReportListTotalService = async (role_Id,department_Id) => {
   try {
-    const body = JSON.stringify({ action: "reportStatusList",role_Id,department_Id});
+    const body = JSON.stringify({ action: "report_list_total",role_Id,department_Id});
     const resp = await axios.post(jobService.JOB_URL, body);
     let json = await resp.data;
     if (json && json.success) {
-      return json.data;
+      return json;
     }
     return null;
   } catch (error) {
@@ -153,7 +153,7 @@ export const ReportStatusListService = async (role_Id,department_Id) => {
 
 export const ReportHistoryTimeService = async (role_Id,department_Id) => {
   try {
-    const body = JSON.stringify({ action: "reporthistorytime",role_Id,department_Id});
+    const body = JSON.stringify({ action: "report_historytime",role_Id,department_Id});
     const resp = await axios.post(jobService.JOB_URL, body);
     let json = await resp.data;
     if (json && json.success) {
@@ -168,7 +168,7 @@ export const ReportHistoryTimeService = async (role_Id,department_Id) => {
 
 export const ReportDepatrmentListService = async () => {
   try {
-    const body = JSON.stringify({ action: "reportDepatrmentList" });
+    const body = JSON.stringify({ action: "report_depatrment" });
     const resp = await axios.post(jobService.JOB_URL, body);
     let json = await resp.data;
     if (json && json.success) {
